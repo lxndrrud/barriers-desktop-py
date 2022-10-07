@@ -2,7 +2,7 @@ import requests
 from env import API_URL
 from models.person import Person, person_from_json
 
-class UsersService:
+class PersonsService:
     def send_skud_info(code: str) -> Person:
         try:
             response = requests.get(API_URL + "users/skudCard", params={

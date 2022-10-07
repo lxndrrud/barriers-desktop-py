@@ -18,7 +18,7 @@ class MyTableModel(QAbstractTableModel):
 
     def setData(self, index, value, role) -> bool:
         self.mylist[index.row()][index.column()] = value
-        #self.dataChanged.emit(index, index)
+        self.dataChanged.emit(index, index)
         return True
 
     def headerData(self, col, orientation, role):

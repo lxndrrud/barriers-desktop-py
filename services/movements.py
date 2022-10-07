@@ -18,7 +18,6 @@ class MovementsService:
                 return []
             for movement in json_:
                 movement_list.append(extended_movement_from_json(movement))
-                print(movement)
             return movement_list
         except:
             print('get all movements exception')
