@@ -1,3 +1,4 @@
+from typing import Optional
 
 
 class Person:
@@ -8,12 +9,12 @@ class Person:
     skud_card: str
     person_type: str
 
-def person_from_json(json_dict: dict, person_type: str) -> Person:
+def person_from_json(json_dict: dict, person_type: Optional[str]) -> Person:
     person = Person()
     person.id_ = json_dict["id"]
     person.firstname = json_dict["firstname"]
     person.middlename = json_dict["middlename"]
     person.lastname = json_dict["lastname"]
     person.skud_card = json_dict['skud_card']
-    person.person_type = person_type
+    person.person_type = person_type if person_type != None else json_dict["type"]
     return person

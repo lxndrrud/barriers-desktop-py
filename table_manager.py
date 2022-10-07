@@ -10,11 +10,12 @@ class TableManager:
     def __init__(self, widget: QTableView, movementsService: MovementsService) -> None:
         self.movementService = movementsService
         self.widget = widget
-        self.get_all_and_set_data()
+        self.widget.setModel(MyTableModel(self.widget, [("kek", "kek","kek", "kek", "kek","kek", "kek","kek")]))
+        #self.get_all_and_set_data()
 
-    def get_all_and_set_data(self):
-        movements_list = self.movementService.get_all()
+    def get_all_and_set_data(self, id_building=None, from_=None, to_=None):
+        movements_list = self.movementService.get_all(id_building, from_, to_)
         mapped = []
         for movement in movements_list: mapped.append(ext_movement_to_tuple(movement))
-        self.widget.setModel(MyTableModel(self.widget, mapped))
+        self.widget.setModel(MyTableModel(self.widget, mapped or [("kek", "kek","kek", "kek", "kek","kek", "kek","kek")]))
         

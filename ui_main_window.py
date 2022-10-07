@@ -15,19 +15,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDateTimeEdit, QGroupBox,
-    QHeaderView, QLabel, QPushButton, QSizePolicy,
-    QTableView, QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QApplication, QDateTimeEdit, QGroupBox, QHeaderView,
+    QLabel, QPushButton, QSizePolicy, QTableView,
+    QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(1200, 800)
-        self.tableWidget = QTableView(Form)
-        self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setGeometry(QRect(1, 31, 821, 641))
-        self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.groupBox = QGroupBox(Form)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setGeometry(QRect(840, 10, 351, 659))
@@ -52,18 +48,23 @@ class Ui_Form(object):
         self.closeBarrier2 = QPushButton(self.groupBox)
         self.closeBarrier2.setObjectName(u"closeBarrier2")
         self.closeBarrier2.setGeometry(QRect(0, 340, 111, 25))
-        self.dateTimeEdit = QDateTimeEdit(self.groupBox)
-        self.dateTimeEdit.setObjectName(u"dateTimeEdit")
-        self.dateTimeEdit.setGeometry(QRect(10, 60, 194, 26))
+        self.fromTime = QDateTimeEdit(self.groupBox)
+        self.fromTime.setObjectName(u"fromTime")
+        self.fromTime.setGeometry(QRect(10, 60, 194, 26))
+        self.fromTime.setDateTime(QDateTime(QDate(2022, 1, 1), QTime(15, 0, 0)))
         self.label = QLabel(self.groupBox)
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(10, 40, 67, 17))
-        self.dateTimeEdit_2 = QDateTimeEdit(self.groupBox)
-        self.dateTimeEdit_2.setObjectName(u"dateTimeEdit_2")
-        self.dateTimeEdit_2.setGeometry(QRect(10, 120, 194, 26))
+        self.toTime = QDateTimeEdit(self.groupBox)
+        self.toTime.setObjectName(u"toTime")
+        self.toTime.setGeometry(QRect(10, 120, 194, 26))
+        self.toTime.setDateTime(QDateTime(QDate(2022, 1, 1), QTime(9, 0, 0)))
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setGeometry(QRect(10, 100, 67, 17))
+        self.tableView = QTableView(Form)
+        self.tableView.setObjectName(u"tableView")
+        self.tableView.setGeometry(QRect(10, 30, 811, 641))
 
         self.retranslateUi(Form)
 

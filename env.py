@@ -1,0 +1,4 @@
+API_URL="http://localhost:8081"
+BARRIER_1_PORT=""
+BARRIER_2_PORT=""
+ID_BUILDING=1
