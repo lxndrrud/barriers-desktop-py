@@ -2,10 +2,10 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 
 class MyTableModel(QAbstractTableModel):
-    def __init__(self, parent, mylist, *args):
+    def __init__(self, parent, mylist, header, *args):
         QAbstractTableModel.__init__(self, parent, *args)
         self.mylist = mylist
-        self.header = ('Здание', 'Событие', 'Время', 'Имя', 'Отчество', 'Фамилия', 'СКУД', 'Тип')
+        self.header = header
 
     def rowCount(self, parent):
         return len(self.mylist)

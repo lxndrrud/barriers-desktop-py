@@ -1,10 +1,11 @@
 from PySide6.QtWidgets import QApplication
+from container import build_app
 
-from main_widget import MainWidget
 
-app = QApplication([])
+if __name__ == "__main__":
+    app = QApplication([])
 
-widget = MainWidget()
-widget.show()
+    widget= build_app()
+    widget.show()
 
-app.exec()
+    app.exec()

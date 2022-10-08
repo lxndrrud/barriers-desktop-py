@@ -1,8 +1,9 @@
 from typing import List, Optional
 import requests
-from env import API_URL
+from env import API_URL, ID_BUILDING
 
 from models.movement import ExtendedMovement, Movement, extended_movement_from_json, movement_from_json
+from models.port_data import PortData
 
 class MovementsService:
     def get_all(self, id_building: int=None, from_: str=None, to_: str=None):
@@ -24,13 +25,14 @@ class MovementsService:
             return []
 
 
-    def create_action(self, skud_card: str, id_building: int, event: str):
+    def create_action(self, portData: PortData, failAction=False):
         try:
             response = requests.post(API_URL + "/movements/action", data={
-                "skud_card": skud_card,
-                "id_building": id_building,
-                "event": event
+                "skud_card": portData.code,
+                "id_building": ID_BUILDING,
+                "event": (portData.reader if not failAction else "fail")
             })
+            return response.status_code
         except:
             print('post action exception')
-            return
+            return 500

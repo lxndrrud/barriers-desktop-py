@@ -30,7 +30,6 @@ class ExtendedMovement:
 def ext_movement_to_tuple(mv: ExtendedMovement) -> tuple:
     res = (mv.movement.building_name, mv.movement.event_name, mv.movement.event_time, 
         mv.user.firstname, mv.user.middlename, mv.user.lastname, mv.user.skud_card, mv.user.person_type)
-    print(res)
     return res
 
 def extended_movement_from_json(json_dict: dict) -> ExtendedMovement:
