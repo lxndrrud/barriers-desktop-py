@@ -8,7 +8,6 @@ from models.port_data import PortData
 class MovementsService:
     def get_all(self, id_building: int=None, from_: str=None, to_: str=None):
         try:
-            print("get all movements is called!")
             response = requests.get(API_URL + "/movements", params={
                 "id_building": id_building,
                 "from": from_,
@@ -20,7 +19,6 @@ class MovementsService:
                 return []
             for movement in json_:
                 movement_list.append(extended_movement_from_json(movement))
-            print(movement_list)
             return movement_list
         except Exception as e:
             print(f'get all movements: {e}')

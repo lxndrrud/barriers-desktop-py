@@ -1,0 +1,5 @@
+# Для открытия псевдо-терминала для Serial port
+
+socat -d -d pty,raw,echo=0 pty,raw,echo=0
+
+

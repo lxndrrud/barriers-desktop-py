@@ -2,6 +2,7 @@ from threading import Thread
 from time import sleep
 from typing import Optional
 import serial
+from models.person import Person
 import models.port_data
 import services.persons
 import services.movements
@@ -11,6 +12,7 @@ from PySide6.QtCore import QObject, Signal
 
 class SerialPortController(QObject):
     afterEventUpdated = Signal()
+    setLastPerson = Signal(Person)
 
     def __init__(self, port: str, baudrate: int) -> None:
         super().__init__()
@@ -33,8 +35,8 @@ class SerialPortController(QObject):
 
     def stopExecution(self): self.low_level_controller.closePort()
 
-    def __alarmBarrier(self, reader: str):
-        self.low_level_controller.writeToPort("@Code=user-not-found;@reader=both" + reader)
+    def __alarmBarrier(self):
+        self.low_level_controller.writeToPort("@Code=user-not-found;@reader=both")
 
     def run(self): 
         self.thread = Thread(target=self.__listenPort)
@@ -55,19 +57,18 @@ class SerialPortController(QObject):
                 if "@Code" not in portData and "@Direction" not in portData:
                     continue
                 portData = models.port_data.PortData(portData)
-
+                # Найти человека по карте и проверить валидность
                 person = self.persons_service.send_skud_info(portData.code)
                 if not person:
-                    self.__alarmBarrier(portData.reader)
+                    self.__alarmBarrier()
                     continue
+                self.setLastPerson.emit(person)
 
                 actionPerfomed: bool = False
                 self.__openBarrierTimeout(portData.reader)
                 for _ in range(35 + 10):
                     fromPort = self.low_level_controller.readFromPort()
-                    #print(fromPort)
                     if fromPort and portData.reader + "-success" in fromPort:
-                        print("Yes!", fromPort)
                         returnCode = self.movements_service.create_action(portData)
                         if returnCode != 201:
                             (self.logger
@@ -78,8 +79,8 @@ class SerialPortController(QObject):
                     self.movements_service.create_action(portData, failAction=True)
                 self.afterEventUpdated.emit()
             except Exception as e:
-                print(e)
-                self.logger.writeToLogs(e)
+                print('serial listen to port: ', e)
+                self.logger.writeToLogs(str(e))
         print(f"ended {self.thread.getName()}")
 
     

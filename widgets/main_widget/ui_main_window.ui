@@ -42,7 +42,7 @@
      <rect>
       <x>20</x>
       <y>40</y>
-      <width>251</width>
+      <width>321</width>
       <height>261</height>
      </rect>
     </property>
@@ -52,7 +52,7 @@
     <widget class="QDateTimeEdit" name="fromTime">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>60</x>
        <y>50</y>
        <width>194</width>
        <height>26</height>
@@ -72,7 +72,7 @@
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>60</x>
        <y>30</y>
        <width>67</width>
        <height>17</height>
@@ -85,7 +85,7 @@
     <widget class="QDateTimeEdit" name="toTime">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>60</x>
        <y>100</y>
        <width>194</width>
        <height>26</height>
@@ -105,7 +105,7 @@
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>60</x>
        <y>80</y>
        <width>67</width>
        <height>17</height>
@@ -118,7 +118,7 @@
     <widget class="QComboBox" name="buildingSelect">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>60</x>
        <y>130</y>
        <width>191</width>
        <height>25</height>
@@ -128,7 +128,7 @@
     <widget class="QPushButton" name="updateMovements">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>60</x>
        <y>180</y>
        <width>191</width>
        <height>25</height>
@@ -143,7 +143,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>470</y>
+      <y>440</y>
       <width>151</width>
       <height>111</height>
      </rect>
@@ -182,7 +182,7 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>470</y>
+      <y>440</y>
       <width>151</width>
       <height>111</height>
      </rect>
@@ -217,6 +217,32 @@
      </property>
     </widget>
    </widget>
+   <widget class="QGroupBox" name="groupBox_6">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>320</y>
+      <width>321</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Информация на человека</string>
+    </property>
+    <widget class="QPushButton" name="personMovementsButton">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>40</y>
+       <width>191</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Перемещения</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QTableView" name="tableView">
    <property name="geometry">
@@ -226,6 +252,21 @@
      <width>811</width>
      <height>571</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <kerning>true</kerning>
+    </font>
+   </property>
+   <property name="showGrid">
+    <bool>true</bool>
+   </property>
+   <property name="sortingEnabled">
+    <bool>true</bool>
+   </property>
+   <property name="cornerButtonEnabled">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox_5">
@@ -238,7 +279,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>Последний вошедший человек</string>
+    <string>Последний просканированный человек</string>
    </property>
    <widget class="QLabel" name="lastPersonLabel">
     <property name="geometry">
@@ -262,38 +303,12 @@
      <set>Qt::LinksAccessibleByMouse</set>
     </property>
    </widget>
-   <widget class="QTextEdit" name="lastPersonFirstname">
+   <widget class="QTextEdit" name="lastPersonFullname">
     <property name="geometry">
      <rect>
       <x>220</x>
       <y>30</y>
-      <width>104</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="lastPersonMiddlename">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>30</y>
-      <width>104</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="lastPersonLastname">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>30</y>
-      <width>104</width>
+      <width>401</width>
       <height>31</height>
      </rect>
     </property>

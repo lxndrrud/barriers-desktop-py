@@ -10,7 +10,6 @@ class PersonsService:
             response = requests.get(API_URL + "/users/skudCard", params={
                 "skud_card": code
             })
-            print(response, response.json())
             return person_from_json(response.json())
         except Exception as e:
             print(f'user send card: {e}')

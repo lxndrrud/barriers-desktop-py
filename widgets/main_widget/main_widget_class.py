@@ -1,11 +1,14 @@
+from typing import List
 from PySide6.QtWidgets import QWidget, QAbstractItemView
 from PySide6.QtCore import QDate, QTime, Signal
+from models.person import Person
 import models.table_model
 import models.movement
 import serial_port.serial_port_controller
 import services.movements
 import services.buildings
 import widgets.main_widget.ui_main_window
+import widgets.personal_movement_modal.personal_movement_modal_class
 
 
 class MainWidget(QWidget):
@@ -24,6 +27,7 @@ class MainWidget(QWidget):
         self.barrier1Controller.setParent(self)
         self.barrier2Controller = b2_controller
         self.barrier2Controller.setParent(self)
+        self.modals: List[widgets.personal_movement_modal.personal_movement_modal_class.PersonalMovementModal] = []
         self.build()
         
 
@@ -37,6 +41,7 @@ class MainWidget(QWidget):
         # Инициализация data-зависимых компонентов UI
         self.setupInfo()
         self.ui_form.updateMovements.clicked.connect(self.updateMovements)
+        self.ui_form.personMovementsButton.clicked.connect(self.getPersonalMovementsModal)
         self.ui_form.closeBarrier1.clicked.connect(self.barrier1Controller.lockBarrier)
         self.ui_form.closeBarrier2.clicked.connect(self.barrier2Controller.lockBarrier)
         self.ui_form.openBarrier1.clicked.connect(self.barrier1Controller.unlockBarrier)
@@ -45,6 +50,8 @@ class MainWidget(QWidget):
         self.beforeShutdown.connect(self.barrier1Controller.stopExecution)
         self.barrier2Controller.afterEventUpdated.connect(self.updateMovements)
         self.beforeShutdown.connect(self.barrier2Controller.stopExecution)
+        self.barrier1Controller.setLastPerson.connect(self.setLastPerson)
+        self.barrier2Controller.setLastPerson.connect(self.setLastPerson)
 
     def closeEvent(self, event) -> None:
         self.beforeShutdown.emit()
@@ -58,7 +65,6 @@ class MainWidget(QWidget):
         self.updateMovements()
 
     def updateMovements(self):
-        print("mw update is called!")
         movements = self.movements_service.get_all(
             self.ui_form.buildingSelect.currentData(),
             "T".join(self.ui_form.fromTime.text().split(" ")),
@@ -68,4 +74,19 @@ class MainWidget(QWidget):
         for movement in movements: mapped.append(models.movement.ext_movement_to_tuple(movement))
         header = ('Здание', 'Событие', 'Время', 'Имя', 'Отчество', 'Фамилия', 'СКУД', 'Тип')
         self.ui_form.tableView.setModel(models.table_model.MyTableModel(self.ui_form.tableView, mapped, header))
+
+    def setLastPerson(self, person: Person):
+        # TODO: Нужно добавить сюда фото человека через QPixmap в QLabel
+        self.ui_form.lastPersonFullname.setText(f"{person.lastname} {person.firstname} {person.middlename}")
+
+    def getPersonalMovementsModal(self):
+        # Получение индекса выбранного передвижения
+        index_ = self.ui_form.tableView.selectedIndexes()[0] if (self.ui_form.tableView.selectedIndexes()) else None
+        if not index_: return
+        movement: models.movement.ExtendedMovement = (self.ui_form.tableView.model()
+            .getSelectedData(self.ui_form.tableView.selectedIndexes()[0]))
+        personalModal = widgets.personal_movement_modal.personal_movement_modal_class.PersonalMovementModal()
+        personalModal.show()
+        self.modals.append(personalModal)
+
 
