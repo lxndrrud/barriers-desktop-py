@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QGroupBox,
     QHeaderView, QLabel, QPushButton, QSizePolicy,
-    QTableView, QWidget)
+    QTableView, QTextEdit, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -83,9 +83,21 @@ class Ui_Form(object):
         self.lastPersonLabel = QLabel(self.groupBox_5)
         self.lastPersonLabel.setObjectName(u"lastPersonLabel")
         self.lastPersonLabel.setGeometry(QRect(0, 20, 200, 200))
-        self.lastPersonLabel.setAutoFillBackground(False)
+        self.lastPersonLabel.setAutoFillBackground(True)
         self.lastPersonLabel.setOpenExternalLinks(True)
         self.lastPersonLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
+        self.lastPersonFirstname = QTextEdit(self.groupBox_5)
+        self.lastPersonFirstname.setObjectName(u"lastPersonFirstname")
+        self.lastPersonFirstname.setGeometry(QRect(220, 30, 104, 31))
+        self.lastPersonFirstname.setReadOnly(True)
+        self.lastPersonMiddlename = QTextEdit(self.groupBox_5)
+        self.lastPersonMiddlename.setObjectName(u"lastPersonMiddlename")
+        self.lastPersonMiddlename.setGeometry(QRect(340, 30, 104, 31))
+        self.lastPersonMiddlename.setReadOnly(True)
+        self.lastPersonLastname = QTextEdit(self.groupBox_5)
+        self.lastPersonLastname.setObjectName(u"lastPersonLastname")
+        self.lastPersonLastname.setGeometry(QRect(460, 30, 104, 31))
+        self.lastPersonLastname.setReadOnly(True)
 
         self.retranslateUi(Form)
 

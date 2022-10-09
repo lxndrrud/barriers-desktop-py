@@ -15,6 +15,6 @@ class BuildingsService:
             for building in json_:
                 buildings_list.append(building_from_json(building))
             return buildings_list
-        except:
-            print('buildings get all exception')
+        except Exception as e:
+            print(f'get all buildings: {e}')
             return []

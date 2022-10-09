@@ -17,7 +17,9 @@ def movement_from_json(json_dict: dict) -> Movement:
     movement.id_building = json_dict["id_building"]
     movement.building_name = json_dict["building_name"]
     movement.event_name = json_dict["event_name"]
-    movement.event_time = json_dict["event_timestamp"]
+    date_ = str(json_dict["event_timestamp"]).split("T")[0]
+    time_ = str(json_dict["event_timestamp"]).split("T")[1].split(".")[0]
+    movement.event_time = f"{date_} {time_}"
     movement.id_event = json_dict["id_event"]
     movement.id_student = json_dict["id_student"]
     movement.id_employee = json_dict["id_employee"]

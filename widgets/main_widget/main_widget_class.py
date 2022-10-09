@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QAbstractItemView
-from PySide6.QtCore import QDate, QTime
+from PySide6.QtCore import QDate, QTime, Signal
 import models.table_model
 import models.movement
 import serial_port.serial_port_controller
@@ -9,6 +9,8 @@ import widgets.main_widget.ui_main_window
 
 
 class MainWidget(QWidget):
+    beforeShutdown = Signal()
+
     def __init__(self,  ui_form: widgets.main_widget.ui_main_window.Ui_Form,
     movements_service: services.movements.MovementsService, buildings_service: services.buildings.BuildingsService,
     b1_controller: serial_port.serial_port_controller.SerialPortController, 
@@ -19,7 +21,9 @@ class MainWidget(QWidget):
         self.movements_service: services.movements.MovementsService = movements_service
         self.buildings_service: services.buildings.BuildingsService = buildings_service
         self.barrier1Controller = b1_controller
+        self.barrier1Controller.setParent(self)
         self.barrier2Controller = b2_controller
+        self.barrier2Controller.setParent(self)
         self.build()
         
 
@@ -37,10 +41,13 @@ class MainWidget(QWidget):
         self.ui_form.closeBarrier2.clicked.connect(self.barrier2Controller.lockBarrier)
         self.ui_form.openBarrier1.clicked.connect(self.barrier1Controller.unlockBarrier)
         self.ui_form.openBarrier2.clicked.connect(self.barrier2Controller.unlockBarrier)
+        self.barrier1Controller.afterEventUpdated.connect(self.updateMovements)
+        self.beforeShutdown.connect(self.barrier1Controller.stopExecution)
+        self.barrier2Controller.afterEventUpdated.connect(self.updateMovements)
+        self.beforeShutdown.connect(self.barrier2Controller.stopExecution)
 
     def closeEvent(self, event) -> None:
-        self.barrier1Controller.low_level_controller.closePort()
-        self.barrier2Controller.low_level_controller.closePort()
+        self.beforeShutdown.emit()
         event.accept()
 
     def setupInfo(self):
@@ -50,8 +57,8 @@ class MainWidget(QWidget):
         # Загрузить передвижения
         self.updateMovements()
 
-
     def updateMovements(self):
+        print("mw update is called!")
         movements = self.movements_service.get_all(
             self.ui_form.buildingSelect.currentData(),
             "T".join(self.ui_form.fromTime.text().split(" ")),

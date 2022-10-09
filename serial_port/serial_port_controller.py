@@ -1,16 +1,19 @@
 from threading import Thread
 from time import sleep
-from types import FunctionType
 from typing import Optional
 import serial
 import models.port_data
 import services.persons
 import services.movements
 import utils.logger
+from PySide6.QtCore import QObject, Signal
 
 
-class SerialPortController:
+class SerialPortController(QObject):
+    afterEventUpdated = Signal()
+
     def __init__(self, port: str, baudrate: int) -> None:
+        super().__init__()
         self.low_level_controller = SerialLowLevelController(port, baudrate)
     
     def build(self, 
@@ -18,10 +21,6 @@ class SerialPortController:
         self.persons_service: services.persons.PersonsService = persons_service
         self.movements_service: services.movements.MovementsService = movements_service
         self.logger: utils.logger.Logger = logger
-
-    def setupCallbacks(self, afterEventUpdate: FunctionType):
-        self.afterEventUpdate = afterEventUpdate
-
 
     def __openBarrierTimeout(self, reader: str):
         self.low_level_controller.writeToPort("@Code=user-success;@reader=" + reader)
@@ -31,6 +30,8 @@ class SerialPortController:
 
     def unlockBarrier(self):
         self.low_level_controller.writeToPort("@Code=unlock;@reader=both")
+
+    def stopExecution(self): self.low_level_controller.closePort()
 
     def __alarmBarrier(self, reader: str):
         self.low_level_controller.writeToPort("@Code=user-not-found;@reader=both" + reader)
@@ -45,9 +46,11 @@ class SerialPortController:
         try: self.low_level_controller.openPort()
         except serial.SerialException as e: self.logger.writeToLogs(str(e))
         while(self.low_level_controller.isOpen()):
+            sleep(0.01)
             try:
                 portData = self.low_level_controller.readFromPort()
-                if not portData or len(portData) == 0 :
+                if portData: print(portData)
+                if not portData or len(portData) == 0:
                     continue
                 if "@Code" not in portData and "@Direction" not in portData:
                     continue
@@ -60,21 +63,23 @@ class SerialPortController:
 
                 actionPerfomed: bool = False
                 self.__openBarrierTimeout(portData.reader)
-                for _ in range(350 + 100):
+                for _ in range(35 + 10):
                     fromPort = self.low_level_controller.readFromPort()
-                    
-                    if fromPort == portData.reader + "-success":
+                    #print(fromPort)
+                    if fromPort and portData.reader + "-success" in fromPort:
+                        print("Yes!", fromPort)
                         returnCode = self.movements_service.create_action(portData)
                         if returnCode != 201:
                             (self.logger
                             .writeToLogs(f"Человек({portData.code}) прошел({portData.reader}), но не был записан"))
                         actionPerfomed = True
-                    sleep(0.01)
+                        break
                 if not actionPerfomed:
                     self.movements_service.create_action(portData, failAction=True)
-                self.afterEventUpdate()
-            except:
-                self.logger.writeToLogs(f"Критическая ошибка SerialPortController")
+                self.afterEventUpdated.emit()
+            except Exception as e:
+                print(e)
+                self.logger.writeToLogs(e)
         print(f"ended {self.thread.getName()}")
 
     
@@ -84,23 +89,26 @@ class SerialLowLevelController:
         self.baudrate = baudrate
 
     def openPort(self):
-        self.serial_port = serial.Serial(self.port, self.baudrate)
+        self.serial_port = serial.Serial(self.port, self.baudrate, timeout=0.1)
 
 
     def writeToPort(self, toWrite: str) -> None:
         try:
             if self.serial_port.isOpen():
-                self.serial_port.write(toWrite)
-        except:
-            pass
+                self.serial_port.write(bytes(toWrite, encoding="utf-8"))
+                #self.serial_port.cancel_write()
+        except Exception as e:
+            print(f'Write exc: {e}')
 
     def readFromPort(self) -> Optional[str]:
         try:
             if self.serial_port.is_open:
-                return self.serial_port.readline().decode('utf-8')
+                haveRead = self.serial_port.readline().decode('utf-8').strip()
+                return haveRead
             return None
-        except:
-            pass
+        except Exception as e:
+            print(f'Read exc: {e}')
+            return None
 
     def closePort(self):
         try:
