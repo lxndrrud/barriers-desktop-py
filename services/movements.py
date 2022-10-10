@@ -2,7 +2,7 @@ from typing import List, Optional
 import requests
 from env import API_URL, ID_BUILDING
 
-from models.movement import ExtendedMovement, Movement, extended_movement_from_json, movement_from_json
+from models.movement import ExtendedMovement, Movement
 from models.port_data import PortData
 
 class MovementsService:
@@ -18,7 +18,7 @@ class MovementsService:
             if len(json_) == 0:
                 return []
             for movement in json_:
-                movement_list.append(extended_movement_from_json(movement))
+                movement_list.append(ExtendedMovement.extended_movement_from_json(movement))
             return movement_list
         except Exception as e:
             print(f'get all movements: {e}')
@@ -39,7 +39,7 @@ class MovementsService:
             if len(json_) == 0:
                 return []
             for movement in json_:
-                movement_list.append(movement_from_json(movement))
+                movement_list.append(Movement.movement_from_json(movement))
             return movement_list
         except Exception as e:
             print(f'get all personal movements: {e}')

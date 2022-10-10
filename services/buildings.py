@@ -2,7 +2,7 @@ from typing import List
 from env import API_URL
 import requests
 
-from models.building import Building, building_from_json
+from models.building import Building
 
 
 class BuildingsService:
@@ -13,7 +13,7 @@ class BuildingsService:
             json_ = response.json()
             if len(json_) == 0: return []
             for building in json_:
-                buildings_list.append(building_from_json(building))
+                buildings_list.append(Building.building_from_json(building))
             return buildings_list
         except Exception as e:
             print(f'get all buildings: {e}')

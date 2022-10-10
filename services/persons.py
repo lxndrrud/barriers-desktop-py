@@ -1,18 +1,29 @@
 from typing import Optional
 import requests
-
+from PySide6.QtCore import QObject, Signal
 from env import API_URL
-from models.person import Person, person_from_json
+from models.employee import Employee
+from models.person import Person
+from models.student import Student
 
-class PersonsService:
+class PersonsService(QObject):
+    raiseException = Signal(str)
+
+    def __init__(self) -> None:
+        super().__init__()
+
     def send_skud_info(self, code: str) -> Optional[Person]:
         try:
             response = requests.get(API_URL + "/users/skudCard", params={
                 "skud_card": code
             })
-            return person_from_json(response.json())
+            person = Person.person_from_json(response.json())
+            if not person: 
+                self.raiseException.emit("Информация о человеке не найдена!")
+            return person
         except Exception as e:
             print(f'user send card: {e}')
+            self.raiseException.emit(e)
             return None
 
     def get_employee_info(self, id_employee: int):
@@ -20,9 +31,10 @@ class PersonsService:
             response = requests.get(API_URL + "/users/employee", params={
                 "id_employee": id_employee
             })
-            # TODO: Сделать парсер сотрудника
-            print(response.json())
-            return response.json()
+            employee = Employee.employee_from_json(response.json())
+            if not employee:
+                self.raiseException.emit("Информация о сотруднике не найдена!")
+            return employee
         except Exception as e:
             print(f'get employee info: {e}')
             return None
@@ -32,9 +44,10 @@ class PersonsService:
             response = requests.get(API_URL + "/users/student", params={
                 "id_student": id_student
             })
-            # TODO: Сделать парсер студента
-            print(response.json())
-            return response.json()
+            student = Student.student_from_json(response.json())
+            if not student: 
+                self.raiseException("Информация о студенте не найдена!")
+            return student
         except Exception as e:
             print(f'get student info: {e}')
             return None

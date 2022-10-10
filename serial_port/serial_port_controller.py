@@ -50,6 +50,13 @@ class SerialPortController(QObject):
         self.indicateStatus.emit(value_)
         return value_
 
+    def __validatePortData(self, portData: str):
+        if not portData or len(portData) == 0:
+            return False
+        if "@Code" not in portData and "@Direction" not in portData:
+            return False
+        return True
+
 
     def __listenPort(self):
         try: self.low_level_controller.openPort()
@@ -57,13 +64,11 @@ class SerialPortController(QObject):
         while(self.__isOpen()):
             sleep(0.01)
             try:
-                portData = self.low_level_controller.readFromPort()
-                if portData: print(portData)
-                if not portData or len(portData) == 0:
+                # Получить и проверить данные с порта
+                strPortData = self.low_level_controller.readFromPort()
+                if not self.__validatePortData(strPortData): 
                     continue
-                if "@Code" not in portData and "@Direction" not in portData:
-                    continue
-                portData = models.port_data.PortData(portData)
+                portData = models.port_data.PortData(strPortData)
                 # Найти человека по карте и проверить валидность
                 person = self.persons_service.send_skud_info(portData.code)
                 if not person:

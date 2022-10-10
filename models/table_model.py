@@ -5,7 +5,7 @@ class MyTableModel(QAbstractTableModel):
     def __init__(self, parent, mylist, header, *args):
         QAbstractTableModel.__init__(self, parent, *args)
         self.mylist = mylist
-        self.my_object_list = [ obj[0] for obj in self.mylist ]
+        self.my_object_list = [ tuple_[0] for tuple_ in self.mylist ]
         self.header = header
 
     def rowCount(self, parent):

@@ -1,6 +1,9 @@
+from typing import Optional
 from PySide6.QtWidgets import QWidget, QAbstractItemView
 from PySide6.QtCore import QDate, QTime, Signal
+from models.employee import Employee
 import models.movement
+from models.student import Student
 import models.table_model
 import services.buildings
 import services.movements
@@ -15,6 +18,8 @@ class PersonalMovementModal(QWidget):
         super().__init__()
         self.id_student = id_student
         self.id_employee = id_employee
+        self.student: Optional[Student] = None
+        self.employee: Optional[Employee] = None
         self.movements_service = movements_service
         self.persons_service = persons_service
         self.buildings_service = buildings_service
@@ -35,19 +40,22 @@ class PersonalMovementModal(QWidget):
         self.ui_form.updateMovements.clicked.connect(self.updateMovements)
 
     def setupInfo(self):
+        # Загрузить информацию о человеке
+        self.loadPerson()
         # Загрузить здания
         buildings = self.buildings_service.get_all()
         for b in buildings: self.ui_form.buildingSelect.addItem(b.name, b.id_)
-        # Загрузить информацию о человеке
-        self.loadPerson()
         # Загрузить передвижения
         self.updateMovements()
 
     def loadPerson(self):
         if self.id_employee != 0:
-            person = self.persons_service.get_employee_info(self.id_employee)
+            self.employee = self.persons_service.get_employee_info(self.id_employee)
+            self.ui_form.personFullname.setText(self.employee.person.fullname())
         elif self.id_student != 0:
-            person = self.persons_service.get_student_info(self.id_student)
+            self.student = self.persons_service.get_student_info(self.id_student)
+            print(self.student)
+            self.ui_form.personFullname.setText(self.student.person.fullname())
         else: return
 
     def updateMovements(self):
@@ -58,7 +66,7 @@ class PersonalMovementModal(QWidget):
             "T".join(self.ui_form.toTime.text().split(" "))
         )
         mapped = []
-        for movement in movements: mapped.append(models.movement.movement_to_tuple(movement))
+        for movement in movements: mapped.append(movement.to_tuple())
         header = ('Здание', 'Событие', 'Время')
         self.ui_form.tableView.setModel(models.table_model.MyTableModel(self.ui_form.tableView, mapped, header))
 

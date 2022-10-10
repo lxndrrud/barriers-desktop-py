@@ -1,7 +1,6 @@
 from typing import List
-from PySide6.QtWidgets import QWidget, QAbstractItemView, QGridLayout
+from PySide6.QtWidgets import QWidget, QAbstractItemView, QGridLayout, QDialog, QLabel, QVBoxLayout
 from PySide6.QtCore import QDate, QTime, Signal
-from PySide6.QtGui import QFont
 from models.person import Person
 import models.table_model
 import models.movement
@@ -69,10 +68,23 @@ class MainWidget(QWidget):
         self.barrier2Controller.indicateStatus.connect(lambda status: (
             self.ui_form.barrier2Indicator.setText("ВКЛ" if status else "ВЫКЛ")
         ))
+        # Создание модального окна при ошибке
+        self.persons_service.raiseException.connect(self.showErrorModal)
 
     def closeEvent(self, event) -> None:
         self.beforeShutdown.emit()
         event.accept()
+
+    def showErrorModal(self, message: str):
+        errorModal = QDialog(self)
+        errorModal.setWindowTitle('Ошибка')
+        label = QLabel()
+        label.setText(message)
+        layout = QVBoxLayout()
+        layout.addWidget(label)
+        errorModal.setLayout(layout)
+        errorModal.resize(200, 200)
+        errorModal.show() 
 
     def setupInfo(self):
         # Загрузить здания
@@ -88,7 +100,7 @@ class MainWidget(QWidget):
             "T".join(self.ui_form.toTime.text().split(" "))
         )
         mapped = []
-        for movement in movements: mapped.append(models.movement.ext_movement_to_tuple(movement))
+        for movement in movements: mapped.append(movement.to_tuple())
         header = ('Здание', 'Событие', 'Время', 'Имя', 'Отчество', 'Фамилия', 'СКУД', 'Тип')
         self.ui_form.tableView.setModel(models.table_model.MyTableModel(self.ui_form.tableView, mapped, header))
 
