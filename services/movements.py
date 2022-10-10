@@ -24,6 +24,28 @@ class MovementsService:
             print(f'get all movements: {e}')
             return []
 
+    def get_all_personal(self, id_employee: int=None, id_student: int=None, 
+    id_building: int=None, from_: str=None, to_: str=None):
+        try:
+            response = requests.get(API_URL + "/movements/user", params={
+                'id_employee': id_employee,
+                'id_student': id_student,
+                'id_building': id_building,
+                'from': from_,
+                'to': to_
+            })
+            json_ = response.json()
+            movement_list: List[Movement] = []
+            if len(json_) == 0:
+                return []
+            for movement in json_:
+                movement_list.append(movement_from_json(movement))
+            return movement_list
+        except Exception as e:
+            print(f'get all personal movements: {e}')
+            return []
+
+
 
     def create_action(self, portData: PortData, failAction=False):
         try:

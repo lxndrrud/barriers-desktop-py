@@ -14,3 +14,25 @@ class PersonsService:
         except Exception as e:
             print(f'user send card: {e}')
             return None
+
+    def get_employee_info(self, id_employee: int):
+        try:
+            response = requests.get(API_URL + "/users/employee", params={
+                "id_employee": id_employee
+            })
+            print(response.json())
+            return response.json()
+        except Exception as e:
+            print(f'get employee info: {e}')
+            return None
+
+    def get_student_info(self, id_student: int):
+        try:
+            response = requests.get(API_URL + "/users/student", params={
+                "id_student": id_student
+            })
+            print(response.json())
+            return response.json()
+        except Exception as e:
+            print(f'get student info: {e}')
+            return None

@@ -13,6 +13,7 @@ from PySide6.QtCore import QObject, Signal
 class SerialPortController(QObject):
     afterEventUpdated = Signal()
     setLastPerson = Signal(Person)
+    indicateStatus = Signal(bool)
 
     def __init__(self, port: str, baudrate: int) -> None:
         super().__init__()
@@ -44,10 +45,16 @@ class SerialPortController(QObject):
         self.thread.start()
         print(f"ending serial port controller thread {self.thread.getName()}")
 
+    def __isOpen(self):
+        value_ = self.low_level_controller.isOpen()
+        self.indicateStatus.emit(value_)
+        return value_
+
+
     def __listenPort(self):
         try: self.low_level_controller.openPort()
         except serial.SerialException as e: self.logger.writeToLogs(str(e))
-        while(self.low_level_controller.isOpen()):
+        while(self.__isOpen()):
             sleep(0.01)
             try:
                 portData = self.low_level_controller.readFromPort()

@@ -1,4 +1,3 @@
-from typing import Tuple
 from .person import Person, person_from_json
 
 class Movement:
@@ -10,6 +9,15 @@ class Movement:
     event_time: str
     id_student: int
     id_employee: int
+
+def movement_to_tuple(mv: Movement) -> tuple:
+    res = (
+        mv, 
+        mv.building_name, 
+        mv.event_name, 
+        mv.event_time, 
+    )
+    return res
 
 def movement_from_json(json_dict: dict) -> Movement:
     movement = Movement()
