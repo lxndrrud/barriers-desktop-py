@@ -20,6 +20,7 @@ class PersonsService:
             response = requests.get(API_URL + "/users/employee", params={
                 "id_employee": id_employee
             })
+            # TODO: Сделать парсер сотрудника
             print(response.json())
             return response.json()
         except Exception as e:
@@ -31,6 +32,7 @@ class PersonsService:
             response = requests.get(API_URL + "/users/student", params={
                 "id_student": id_student
             })
+            # TODO: Сделать парсер студента
             print(response.json())
             return response.json()
         except Exception as e:
