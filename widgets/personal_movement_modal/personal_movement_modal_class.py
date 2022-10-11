@@ -54,7 +54,6 @@ class PersonalMovementModal(QWidget):
             self.ui_form.personFullname.setText(self.employee.person.fullname())
         elif self.id_student != 0:
             self.student = self.persons_service.get_student_info(self.id_student)
-            print(self.student)
             self.ui_form.personFullname.setText(self.student.person.fullname())
         else: return
 

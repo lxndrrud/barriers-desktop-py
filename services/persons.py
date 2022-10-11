@@ -7,7 +7,7 @@ from models.person import Person
 from models.student import Student
 
 class PersonsService(QObject):
-    raiseException = Signal(str)
+    showException = Signal(str)
 
     def __init__(self) -> None:
         super().__init__()
@@ -19,11 +19,10 @@ class PersonsService(QObject):
             })
             person = Person.person_from_json(response.json())
             if not person: 
-                self.raiseException.emit("Информация о человеке не найдена!")
+                raise Exception("Информация о человеке не найдена!")
             return person
         except Exception as e:
-            print(f'user send card: {e}')
-            self.raiseException.emit(e)
+            self.showException.emit(e)
             return None
 
     def get_employee_info(self, id_employee: int):
@@ -33,10 +32,10 @@ class PersonsService(QObject):
             })
             employee = Employee.employee_from_json(response.json())
             if not employee:
-                self.raiseException.emit("Информация о сотруднике не найдена!")
+                raise Exception("Информация о сотруднике не найдена!")
             return employee
         except Exception as e:
-            print(f'get employee info: {e}')
+            self.showException.emit(e)
             return None
 
     def get_student_info(self, id_student: int):
@@ -46,8 +45,8 @@ class PersonsService(QObject):
             })
             student = Student.student_from_json(response.json())
             if not student: 
-                self.raiseException("Информация о студенте не найдена!")
+                raise Exception("Информация о студенте не найдена!")
             return student
         except Exception as e:
-            print(f'get student info: {e}')
+            self.showException.emit(e)
             return None

@@ -16,8 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QGridLayout,
-    QGroupBox, QHeaderView, QLabel, QPushButton,
-    QSizePolicy, QTableView, QTextEdit, QWidget)
+    QGroupBox, QHeaderView, QLabel, QLayout,
+    QPushButton, QSizePolicy, QTableView, QTextEdit,
+    QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -26,17 +27,19 @@ class Ui_Form(object):
         Form.resize(1200, 900)
         self.layoutWidget = QWidget(Form)
         self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(10, 10, 1181, 881))
+        self.layoutWidget.setGeometry(QRect(10, 10, 1171, 881))
         self.gridLayout = QGridLayout(self.layoutWidget)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.groupBox_5 = QGroupBox(self.layoutWidget)
         self.groupBox_5.setObjectName(u"groupBox_5")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox_5.sizePolicy().hasHeightForWidth())
         self.groupBox_5.setSizePolicy(sizePolicy)
+        self.groupBox_5.setMinimumSize(QSize(0, 250))
         self.groupBox_5.setMaximumSize(QSize(16777215, 250))
         self.lastPersonLabel = QLabel(self.groupBox_5)
         self.lastPersonLabel.setObjectName(u"lastPersonLabel")
@@ -53,13 +56,14 @@ class Ui_Form(object):
 
         self.groupBox = QGroupBox(self.layoutWidget)
         self.groupBox.setObjectName(u"groupBox")
-        sizePolicy1 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy1)
-        self.groupBox.setMaximumSize(QSize(350, 16777215))
-        self.groupBox.setBaseSize(QSize(200, 0))
+        self.groupBox.setMinimumSize(QSize(350, 0))
+        self.groupBox.setMaximumSize(QSize(16777215, 16777215))
+        self.groupBox.setBaseSize(QSize(200, 600))
         self.groupBox_2 = QGroupBox(self.groupBox)
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.groupBox_2.setGeometry(QRect(20, 40, 321, 261))
@@ -120,7 +124,7 @@ class Ui_Form(object):
 
         self.tableView = QTableView(self.layoutWidget)
         self.tableView.setObjectName(u"tableView")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.tableView.sizePolicy().hasHeightForWidth())

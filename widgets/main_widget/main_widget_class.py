@@ -33,7 +33,6 @@ class MainWidget(QWidget):
         self.barrier2Controller.setParent(self)
         self.modals: List[widgets.personal_movement_modal.personal_movement_modal_class.PersonalMovementModal] = []
         self.build()
-        
 
     def build(self):
         # Инициализация UI
@@ -42,8 +41,11 @@ class MainWidget(QWidget):
         self.ui_form.toTime.setDate(QDate.currentDate().addDays(1))
         self.ui_form.toTime.setTime(QTime(0, 0, 0))
         self.ui_form.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
-        ## Инициализация data-зависимых компонентов UI
-        self.setupInfo()
+        self.ui_form.gridLayout.setSizeConstraint(QGridLayout.SetMaximumSize)
+        # Соединение обновления размера формы по размер окна 
+        self.resizeEvent = lambda event: self.ui_form.layoutWidget.resize(
+            event.size().width()-20, 
+            event.size().height()-20)
         # Обновление передвижений
         self.ui_form.updateMovements.clicked.connect(self.updateMovements)
         # Персональные передвижения
@@ -69,7 +71,11 @@ class MainWidget(QWidget):
             self.ui_form.barrier2Indicator.setText("ВКЛ" if status else "ВЫКЛ")
         ))
         # Создание модального окна при ошибке
-        self.persons_service.raiseException.connect(self.showErrorModal)
+        self.persons_service.showException.connect(self.showErrorModal)
+        self.buildings_service.showException.connect(self.showErrorModal)
+        self.movements_service.showException.connect(self.showErrorModal)
+        # Инициализация data-зависимых компонентов UI
+        self.setupInfo()
 
     def closeEvent(self, event) -> None:
         self.beforeShutdown.emit()
@@ -77,12 +83,15 @@ class MainWidget(QWidget):
 
     def showErrorModal(self, message: str):
         errorModal = QDialog(self)
+        errorModal.setModal(True)
         errorModal.setWindowTitle('Ошибка')
         label = QLabel()
         label.setText(message)
+        label.setWordWrap(True)
         layout = QVBoxLayout()
         layout.addWidget(label)
         errorModal.setLayout(layout)
+        errorModal.setMaximumWidth(400)
         errorModal.resize(200, 200)
         errorModal.show() 
 
