@@ -5,7 +5,8 @@ class PersonBase:
     firstname: str
     middlename: str
     lastname: str
-    skud_card: str
+    skud_card: Optional[str]
+    photo_path: Optional[str]
 
     def fullname(self):
         return f"{self.lastname} {self.firstname} {self.middlename}"
@@ -18,6 +19,7 @@ class PersonBase:
         person.middlename = json_dict["middlename"]
         person.lastname = json_dict["lastname"]
         person.skud_card = json_dict['skud_card']
+        person.photo_path = json_dict['photo_path']
         return person
 
 class Person(PersonBase):
@@ -34,8 +36,9 @@ class Person(PersonBase):
             person.firstname = json_dict["firstname"]
             person.middlename = json_dict["middlename"]
             person.lastname = json_dict["lastname"]
-            person.skud_card = json_dict['skud_card']
+            person.skud_card = json_dict.get("skud_card", None)
+            person.photo_path = json_dict.get("photo_path", None)
             person.person_type = person_type if person_type != None else json_dict["type"]
             return person
-        except:
+        except Exception as e:
             return None

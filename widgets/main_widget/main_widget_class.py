@@ -7,7 +7,8 @@ import models.movement
 import serial_port.serial_port_controller
 import services.movements
 import services.buildings
-from services.persons import PersonsService
+import services.persons
+import services.photos
 import widgets.main_widget.ui_main_window
 import widgets.personal_movement_modal.personal_movement_modal_class
 
@@ -17,7 +18,7 @@ class MainWidget(QWidget):
 
     def __init__(self,  ui_form: widgets.main_widget.ui_main_window.Ui_Form,
     movements_service: services.movements.MovementsService, buildings_service: services.buildings.BuildingsService,
-    persons_service: PersonsService,
+    persons_service: services.persons.PersonsService, photos_service: services.photos.PhotosService,
     b1_controller: serial_port.serial_port_controller.SerialPortController, 
     b2_controller: serial_port.serial_port_controller.SerialPortController) -> None:
         super().__init__()
@@ -27,6 +28,7 @@ class MainWidget(QWidget):
         self.movements_service: services.movements.MovementsService = movements_service
         self.buildings_service: services.buildings.BuildingsService = buildings_service
         self.persons_service = persons_service
+        self.photos_service = photos_service
         self.barrier1Controller = b1_controller
         self.barrier1Controller.setParent(self)
         self.barrier2Controller = b2_controller
@@ -74,6 +76,7 @@ class MainWidget(QWidget):
         self.persons_service.showException.connect(self.showErrorModal)
         self.buildings_service.showException.connect(self.showErrorModal)
         self.movements_service.showException.connect(self.showErrorModal)
+        self.photos_service.showException.connect(self.showErrorModal)
         # Инициализация data-зависимых компонентов UI
         self.setupInfo()
 
@@ -115,6 +118,10 @@ class MainWidget(QWidget):
 
     def setLastPerson(self, person: Person):
         # TODO: Нужно добавить сюда фото человека через QPixmap в QLabel
+        if person.photo_path:
+            picture = self.photos_service.get_photo(person.photo_path)
+            if picture:
+                self.ui_form.lastPersonLabel.setPixmap(picture)
         self.ui_form.lastPersonFullname.setText(f"{person.lastname} {person.firstname} {person.middlename}")
 
     def getPersonalMovementsModal(self):

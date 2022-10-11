@@ -52,9 +52,13 @@ class PersonalMovementModal(QWidget):
         if self.id_employee != 0:
             self.employee = self.persons_service.get_employee_info(self.id_employee)
             self.ui_form.personFullname.setText(self.employee.person.fullname())
+            self.ui_form.typePerson.setText(self.employee.person.person_type)
+            self.ui_form.skudCard.setText(self.employee.person.skud_card)
         elif self.id_student != 0:
             self.student = self.persons_service.get_student_info(self.id_student)
             self.ui_form.personFullname.setText(self.student.person.fullname())
+            self.ui_form.typePerson.setText(self.student.person.person_type)
+            self.ui_form.skudCard.setText(self.student.person.skud_card)
         else: return
 
     def updateMovements(self):

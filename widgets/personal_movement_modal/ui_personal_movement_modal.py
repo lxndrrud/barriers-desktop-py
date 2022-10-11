@@ -23,7 +23,9 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1200, 750)
+        Form.resize(1150, 750)
+        Form.setMinimumSize(QSize(1150, 750))
+        Form.setMaximumSize(QSize(1150, 750))
         self.personPhoto = QLabel(Form)
         self.personPhoto.setObjectName(u"personPhoto")
         self.personPhoto.setGeometry(QRect(20, 10, 200, 200))
@@ -69,6 +71,7 @@ class Ui_Form(object):
         self.skudCard = QTextEdit(self.groupBox_3)
         self.skudCard.setObjectName(u"skudCard")
         self.skudCard.setGeometry(QRect(0, 20, 151, 31))
+        self.skudCard.setReadOnly(True)
         self.groupBox_4 = QGroupBox(Form)
         self.groupBox_4.setObjectName(u"groupBox_4")
         self.groupBox_4.setGeometry(QRect(240, 0, 371, 51))
@@ -82,6 +85,7 @@ class Ui_Form(object):
         self.typePerson = QTextEdit(self.groupBox_5)
         self.typePerson.setObjectName(u"typePerson")
         self.typePerson.setGeometry(QRect(0, 20, 151, 31))
+        self.typePerson.setReadOnly(True)
 
         self.retranslateUi(Form)
 
