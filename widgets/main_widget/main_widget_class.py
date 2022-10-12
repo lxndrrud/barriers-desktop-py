@@ -77,6 +77,8 @@ class MainWidget(QWidget):
         self.buildings_service.showException.connect(self.showErrorModal)
         self.movements_service.showException.connect(self.showErrorModal)
         self.photos_service.showException.connect(self.showErrorModal)
+        self.barrier1Controller.showException.connect(self.showErrorModal)
+        self.barrier2Controller.showException.connect(self.showErrorModal)
         # Инициализация data-зависимых компонентов UI
         self.setupInfo()
 
@@ -117,11 +119,10 @@ class MainWidget(QWidget):
         self.ui_form.tableView.setModel(models.table_model.MyTableModel(self.ui_form.tableView, mapped, header))
 
     def setLastPerson(self, person: Person):
-        # TODO: Нужно добавить сюда фото человека через QPixmap в QLabel
         if person.photo_path:
-            picture = self.photos_service.get_photo(person.photo_path)
-            if picture:
-                self.ui_form.lastPersonLabel.setPixmap(picture)
+            photo = self.photos_service.get_photo(person.photo_path)
+            if photo:
+                self.ui_form.lastPersonLabel.setPixmap(photo)
         self.ui_form.lastPersonFullname.setText(f"{person.lastname} {person.firstname} {person.middlename}")
 
     def getPersonalMovementsModal(self):
@@ -136,7 +137,8 @@ class MainWidget(QWidget):
                 movement.movement.id_employee,
                 self.movements_service,
                 self.persons_service,
-                self.buildings_service))
+                self.buildings_service,
+                self.photos_service))
         personalModal.show()
         self.modals.append(personalModal)
 

@@ -8,13 +8,14 @@ import models.table_model
 import services.buildings
 import services.movements
 import services.persons
+import services.photos
 import widgets.personal_movement_modal.ui_personal_movement_modal
 
 
 class PersonalMovementModal(QWidget):
     def __init__(self, id_student: int, id_employee: int, 
     movements_service: services.movements.MovementsService, persons_service: services.persons.PersonsService, 
-    buildings_service: services.buildings.BuildingsService) -> None:
+    buildings_service: services.buildings.BuildingsService, photos_service: services.photos.PhotosService) -> None:
         super().__init__()
         self.id_student = id_student
         self.id_employee = id_employee
@@ -23,6 +24,7 @@ class PersonalMovementModal(QWidget):
         self.movements_service = movements_service
         self.persons_service = persons_service
         self.buildings_service = buildings_service
+        self.photos_service = photos_service
         self.ui_form = widgets.personal_movement_modal.ui_personal_movement_modal.Ui_Form()
         self.ui_form.setupUi(self)
         self.setup()
@@ -54,12 +56,20 @@ class PersonalMovementModal(QWidget):
             self.ui_form.personFullname.setText(self.employee.person.fullname())
             self.ui_form.typePerson.setText(self.employee.person.person_type)
             self.ui_form.skudCard.setText(self.employee.person.skud_card)
+            if self.employee.person.photo_path:
+                photo = self.photos_service.get_photo(self.employee.person.photo_path)
+                if photo:
+                    self.ui_form.personPhoto.setPixmap(photo)
         elif self.id_student != 0:
             self.student = self.persons_service.get_student_info(self.id_student)
             self.ui_form.personFullname.setText(self.student.person.fullname())
             self.ui_form.typePerson.setText(self.student.person.person_type)
             self.ui_form.skudCard.setText(self.student.person.skud_card)
-        else: return
+            if self.student.person.photo_path:
+                photo = self.photos_service.get_photo(self.student.person.photo_path)
+                if photo:
+                    self.ui_form.personPhoto.setPixmap(photo)
+        else: self.close()
 
     def updateMovements(self):
         movements = self.movements_service.get_all_personal(
