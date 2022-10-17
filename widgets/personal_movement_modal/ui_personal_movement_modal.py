@@ -29,7 +29,7 @@ class Ui_Form(object):
         self.personPhoto = QLabel(Form)
         self.personPhoto.setObjectName(u"personPhoto")
         self.personPhoto.setGeometry(QRect(20, 10, 200, 200))
-        self.personPhoto.setAutoFillBackground(True)
+        self.personPhoto.setAutoFillBackground(False)
         self.groupBox = QGroupBox(Form)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setGeometry(QRect(10, 230, 771, 481))

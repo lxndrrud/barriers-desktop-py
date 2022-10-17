@@ -14,8 +14,9 @@ class PhotosService(QObject):
             response = requests.get(f"{PHOTOS_API_URL}/{photo_path}")
             if response.status_code != 200:
                 raise Exception(f"ошибка сервера -> {response.json()}")
-            picture = response.content()
-            return QPixmap(picture)
+            pixmap = QPixmap()
+            pixmap.loadFromData(response.content)
+            return pixmap
         except Exception as e:
             self.showException.emit(f"Ошибка во время получения фото: {e}")
             return None

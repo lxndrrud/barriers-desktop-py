@@ -1,4 +1,5 @@
 import serial_port.serial_port_controller
+import serial_port.simplified_serial_port_controller
 import services.buildings
 import services.movements
 import services.persons
@@ -16,10 +17,19 @@ def build_app():
     photos_service = services.photos.PhotosService()
     logger = utils.logger.Logger()
 
+    """
     barrier1Controller = serial_port.serial_port_controller.SerialPortController(BARRIER_1_PORT, BAUDRATE)
     barrier1Controller.build(persons_service, movements_service, logger)
     barrier2Controller = serial_port.serial_port_controller.SerialPortController(BARRIER_2_PORT, BAUDRATE)
     barrier2Controller.build(persons_service, movements_service, logger)
+    """
+    barrier1Controller = (serial_port.simplified_serial_port_controller
+        .SimplifiedPortController(BARRIER_1_PORT, BAUDRATE))
+    barrier1Controller.build(persons_service, movements_service, logger)
+    barrier2Controller = (serial_port.simplified_serial_port_controller
+        .SimplifiedPortController(BARRIER_2_PORT, BAUDRATE))
+    barrier2Controller.build(persons_service, movements_service, logger)
+    
 
     main_ui_form = widgets.main_widget.ui_main_window.Ui_Form()
     

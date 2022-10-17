@@ -5,6 +5,7 @@ from models.person import Person
 import models.table_model
 import models.movement
 import serial_port.serial_port_controller
+import serial_port.serial_port_interface
 import services.movements
 import services.buildings
 import services.persons
@@ -19,8 +20,8 @@ class MainWidget(QWidget):
     def __init__(self,  ui_form: widgets.main_widget.ui_main_window.Ui_Form,
     movements_service: services.movements.MovementsService, buildings_service: services.buildings.BuildingsService,
     persons_service: services.persons.PersonsService, photos_service: services.photos.PhotosService,
-    b1_controller: serial_port.serial_port_controller.SerialPortController, 
-    b2_controller: serial_port.serial_port_controller.SerialPortController) -> None:
+    b1_controller: serial_port.serial_port_interface.ISerialPortController, 
+    b2_controller: serial_port.serial_port_interface.ISerialPortController) -> None:
         super().__init__()
         self.ui_form = ui_form
         self.setLayout(QGridLayout(self))

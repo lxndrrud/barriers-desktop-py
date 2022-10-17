@@ -1,24 +1,20 @@
 from threading import Thread
 from time import sleep
-from typing import Optional
 import serial
 from models.person import Person
 import models.port_data
 import services.persons
 import services.movements
 import utils.logger
+import serial_port.low_level_controller
+import serial_port.serial_port_interface
 from PySide6.QtCore import QObject, Signal
 
 
-class SerialPortController(QObject):
-    afterEventUpdated = Signal()
-    setLastPerson = Signal(Person)
-    indicateStatus = Signal(bool)
-    showException = Signal(str)
-
+class SerialPortController(serial_port.serial_port_interface.ISerialPortController):
     def __init__(self, port: str, baudrate: int) -> None:
         super().__init__()
-        self.low_level_controller = SerialLowLevelController(port, baudrate)
+        self.low_level_controller = serial_port.low_level_controller.SerialLowLevelController(port, baudrate)
     
     def build(self, 
     persons_service: services.persons.PersonsService, movements_service: services.movements.MovementsService, logger: utils.logger.Logger):
@@ -50,30 +46,16 @@ class SerialPortController(QObject):
         self.thread = Thread(target=self.__listenPort)
         self.thread.start()
 
-    def __isOpen(self):
-        value_ = self.low_level_controller.isOpen()
-        self.indicateStatus.emit(value_)
-        if not value_: self.showException.emit(f"Порт {self.low_level_controller.port} закрыт!")
-        return value_
-
-    def __validatePortData(self, portData: str):
-        if not portData or len(portData) == 0:
-            return False
-        if "@Code" not in portData and "@Direction" not in portData:
-            return False
-        return True
-
-
     def __listenPort(self):
         try: self.low_level_controller.openPort()
         except serial.SerialException as e: 
             self.logger.writeToLogs(f"high level {self.low_level_controller.port}: {e}")
-        while(self.__isOpen()):
+        while(self._isOpen()):
             sleep(0.01)
             try:
                 # Получить и проверить данные с порта
                 strPortData = self.low_level_controller.readFromPort()
-                if not self.__validatePortData(strPortData): 
+                if not self._validatePortData(strPortData): 
                     continue
                 portData = models.port_data.PortData(strPortData)
                 # Найти человека по карте и проверить валидность
@@ -105,52 +87,6 @@ class SerialPortController(QObject):
                 self.showException.emit(f"high level {self.low_level_controller.port} listen: {e}")
                 self.logger.writeToLogs(f"high level {self.low_level_controller.port} listen: {e}")
 
-    
-class SerialLowLevelController:
-    def __init__(self, port: str, baudrate: int) -> None:
-        self.port = port
-        self.baudrate = baudrate
-
-    def build(self, logger: utils.logger.Logger):
-        self.logger = logger
-
-    def openPort(self):
-        self.serial_port = serial.Serial(self.port, self.baudrate, timeout=0.1)
-
-    def writeToPort(self, toWrite: str) -> bool:
-        try:
-            if self.serial_port.isOpen():
-                self.serial_port.write(bytes(toWrite, encoding="utf-8"))
-                return True
-            return False
-        except Exception as e:
-            self.logger.writeToLogs(f"low level {self.port} write to port: {e}")
-            self.serial_port.close()
-            return False
-
-    def readFromPort(self) -> Optional[str]:
-        try:
-            if self.serial_port.is_open:
-                haveRead = self.serial_port.readline().decode('utf-8').strip()
-                return haveRead
-            return None
-        except Exception as e:
-            self.logger.writeToLogs(f"low level {self.port} read from port: {e}")
-            self.serial_port.close()
-            return None
-
-    def closePort(self):
-        try:
-            self.serial_port.close()
-        except Exception as e:
-            self.logger.writeToLogs(f"low level {self.port} close port: {e}")
-
-    def isOpen(self):
-        try:
-            return self.serial_port.isOpen()
-        except Exception as e: 
-            self.logger.writeToLogs(f"low level {self.port} port isOpen: {e}")
-            return False
     
 
 

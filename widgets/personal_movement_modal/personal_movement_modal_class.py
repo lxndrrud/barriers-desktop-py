@@ -59,7 +59,7 @@ class PersonalMovementModal(QWidget):
             if self.employee.person.photo_path:
                 photo = self.photos_service.get_photo(self.employee.person.photo_path)
                 if photo:
-                    self.ui_form.personPhoto.setPixmap(photo)
+                    self.ui_form.personPhoto.setPixmap(photo.scaled(200, 200))
         elif self.id_student != 0:
             self.student = self.persons_service.get_student_info(self.id_student)
             self.ui_form.personFullname.setText(self.student.person.fullname())
@@ -68,7 +68,7 @@ class PersonalMovementModal(QWidget):
             if self.student.person.photo_path:
                 photo = self.photos_service.get_photo(self.student.person.photo_path)
                 if photo:
-                    self.ui_form.personPhoto.setPixmap(photo)
+                    self.ui_form.personPhoto.setPixmap(photo.scaled(200, 200))
         else: self.close()
 
     def updateMovements(self):
