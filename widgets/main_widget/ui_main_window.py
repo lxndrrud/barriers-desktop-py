@@ -51,6 +51,9 @@ class Ui_Form(object):
         self.lastPersonFullname.setObjectName(u"lastPersonFullname")
         self.lastPersonFullname.setGeometry(QRect(220, 30, 401, 31))
         self.lastPersonFullname.setReadOnly(True)
+        self.lastPersonType = QTextEdit(self.groupBox_5)
+        self.lastPersonType.setObjectName(u"lastPersonType")
+        self.lastPersonType.setGeometry(QRect(220, 110, 171, 31))
 
         self.gridLayout.addWidget(self.groupBox_5, 1, 0, 1, 1)
 

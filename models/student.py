@@ -9,7 +9,6 @@ class Student:
 
     @staticmethod
     def student_from_json(json_dict: dict):
-        print(json_dict)
         try:
             person = Person.person_from_json(json_dict["student"])
             groups = [ Group.group_from_json(group) for group in json_dict["groups"] ]

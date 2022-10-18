@@ -51,7 +51,6 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
                 # Найти человека по карте и проверить валидность
                 person = self.persons_service.send_skud_info(portData.code)
                 if not person:
-                    self.showException.emit(f"simplified high level {self.low_level_controller.port}: Человек не найден!")
                     continue
                 self.setLastPerson.emit(person)
                 

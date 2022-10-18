@@ -124,7 +124,8 @@ class MainWidget(QWidget):
             photo = self.photos_service.get_photo(person.photo_path)
             if photo:
                 self.ui_form.lastPersonLabel.setPixmap(photo.scaled(self.ui_form.lastPersonLabel.size()))
-        self.ui_form.lastPersonFullname.setText(f"{person.lastname} {person.firstname} {person.middlename}")
+        self.ui_form.lastPersonFullname.setText(person.fullname())
+        self.ui_form.lastPersonType.setText(person.person_type)
 
     def getPersonalMovementsModal(self):
         # Получение индекса выбранного передвижения

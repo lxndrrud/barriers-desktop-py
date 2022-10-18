@@ -3,7 +3,7 @@ from PySide6.QtGui import *
 
 class MyListModel(QAbstractListModel):
     def __init__(self, parent, mylist, *args):
-        QAbstractTableModel.__init__(self, parent, *args)
+        QAbstractListModel.__init__(self, parent, *args)
         self.mylist = [ x.toString() for x in mylist ] 
         self.my_object_list = mylist
 

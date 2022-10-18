@@ -1,6 +1,6 @@
 from typing import Optional
 from PySide6.QtWidgets import QWidget, QAbstractItemView
-from PySide6.QtCore import QDate, QTime, Signal
+from PySide6.QtCore import QDate, QTime, Signal, QStringListModel
 from models.employee import Employee
 import models.movement
 from models.student import Student
@@ -32,6 +32,7 @@ class PersonalMovementModal(QWidget):
 
     def setup(self):
         # Инициализация UI
+        self.ui_form.infoListView.setModel(QStringListModel(self.ui_form.infoListView))
         self.ui_form.fromTime.setDate(QDate.currentDate())
         self.ui_form.fromTime.setTime(QTime(0, 0, 0))
         self.ui_form.toTime.setDate(QDate.currentDate().addDays(1))
@@ -57,9 +58,7 @@ class PersonalMovementModal(QWidget):
             self.ui_form.personFullname.setText(self.employee.person.fullname())
             self.ui_form.typePerson.setText(self.employee.person.person_type)
             self.ui_form.skudCard.setText(self.employee.person.skud_card)
-            self.ui_form.infoListView.setModel(models.list_model.MyListModel(
-                self.ui_form.infoListView, 
-                self.employee.positions))
+            self.__loadLastPersonInfoContent(self.employee.positions)
             if self.employee.person.photo_path:
                 photo = self.photos_service.get_photo(self.employee.person.photo_path)
                 if photo:
@@ -69,14 +68,19 @@ class PersonalMovementModal(QWidget):
             self.ui_form.personFullname.setText(self.student.person.fullname())
             self.ui_form.typePerson.setText(self.student.person.person_type)
             self.ui_form.skudCard.setText(self.student.person.skud_card)
-            self.ui_form.infoListView.setModel(models.list_model.MyListModel(
-                self.ui_form.infoListView, 
-                self.student.groups))
+            self.__loadLastPersonInfoContent(self.student.groups)
             if self.student.person.photo_path:
                 photo = self.photos_service.get_photo(self.student.person.photo_path)
                 if photo:
                     self.ui_form.personPhoto.setPixmap(photo.scaled(self.ui_form.personPhoto.size()))
         else: self.close()
+
+    def __loadLastPersonInfoContent(self, content):
+        model: QStringListModel = self.ui_form.infoListView.model()
+        list_ = []
+        for item in content:
+            list_.append(item.toString())
+        model.setStringList(list_)
 
     def updateMovements(self):
         movements = self.movements_service.get_all_personal(
