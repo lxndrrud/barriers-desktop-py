@@ -123,7 +123,7 @@ class MainWidget(QWidget):
         if person.photo_path:
             photo = self.photos_service.get_photo(person.photo_path)
             if photo:
-                self.ui_form.lastPersonLabel.setPixmap(photo)
+                self.ui_form.lastPersonLabel.setPixmap(photo.scaled(self.ui_form.lastPersonLabel.size()))
         self.ui_form.lastPersonFullname.setText(f"{person.lastname} {person.firstname} {person.middlename}")
 
     def getPersonalMovementsModal(self):

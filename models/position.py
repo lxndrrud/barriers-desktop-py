@@ -13,3 +13,6 @@ class Position:
         position.date_drop = json_dict['date_drop']
         return position
 
+    def toString(self) -> str:
+        return f"{self.title} - {self.department_title}"
+

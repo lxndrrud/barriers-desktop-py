@@ -5,6 +5,7 @@ from models.employee import Employee
 import models.movement
 from models.student import Student
 import models.table_model
+import models.list_model
 import services.buildings
 import services.movements
 import services.persons
@@ -56,19 +57,25 @@ class PersonalMovementModal(QWidget):
             self.ui_form.personFullname.setText(self.employee.person.fullname())
             self.ui_form.typePerson.setText(self.employee.person.person_type)
             self.ui_form.skudCard.setText(self.employee.person.skud_card)
+            self.ui_form.infoListView.setModel(models.list_model.MyListModel(
+                self.ui_form.infoListView, 
+                self.employee.positions))
             if self.employee.person.photo_path:
                 photo = self.photos_service.get_photo(self.employee.person.photo_path)
                 if photo:
-                    self.ui_form.personPhoto.setPixmap(photo.scaled(200, 200))
+                    self.ui_form.personPhoto.setPixmap(photo.scaled(self.ui_form.personPhoto.size()))
         elif self.id_student != 0:
             self.student = self.persons_service.get_student_info(self.id_student)
             self.ui_form.personFullname.setText(self.student.person.fullname())
             self.ui_form.typePerson.setText(self.student.person.person_type)
             self.ui_form.skudCard.setText(self.student.person.skud_card)
+            self.ui_form.infoListView.setModel(models.list_model.MyListModel(
+                self.ui_form.infoListView, 
+                self.student.groups))
             if self.student.person.photo_path:
                 photo = self.photos_service.get_photo(self.student.person.photo_path)
                 if photo:
-                    self.ui_form.personPhoto.setPixmap(photo.scaled(200, 200))
+                    self.ui_form.personPhoto.setPixmap(photo.scaled(self.ui_form.personPhoto.size()))
         else: self.close()
 
     def updateMovements(self):

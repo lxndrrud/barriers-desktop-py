@@ -12,3 +12,6 @@ class Group:
         group.course = json_dict['course']
         group.department_title = json_dict['department_title']
         return group
+
+    def toString(self)->str:
+        return f"{self.title} - {self.course} курс - {self.department_title}"

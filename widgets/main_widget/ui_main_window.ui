@@ -369,6 +369,9 @@
         <kerning>true</kerning>
        </font>
       </property>
+      <property name="textElideMode">
+       <enum>Qt::ElideMiddle</enum>
+      </property>
       <property name="showGrid">
        <bool>true</bool>
       </property>
@@ -379,7 +382,7 @@
        <bool>false</bool>
       </property>
       <property name="cornerButtonEnabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
      </widget>
     </item>

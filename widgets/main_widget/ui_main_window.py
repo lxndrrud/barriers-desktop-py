@@ -133,10 +133,11 @@ class Ui_Form(object):
         font.setPointSize(8)
         font.setKerning(True)
         self.tableView.setFont(font)
+        self.tableView.setTextElideMode(Qt.ElideMiddle)
         self.tableView.setShowGrid(True)
         self.tableView.setSortingEnabled(False)
         self.tableView.setWordWrap(False)
-        self.tableView.setCornerButtonEnabled(False)
+        self.tableView.setCornerButtonEnabled(True)
 
         self.gridLayout.addWidget(self.tableView, 0, 0, 1, 1)
 
