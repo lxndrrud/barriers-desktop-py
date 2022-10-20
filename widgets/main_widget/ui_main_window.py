@@ -15,24 +15,32 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QGridLayout,
-    QGroupBox, QHeaderView, QLabel, QLayout,
-    QPushButton, QSizePolicy, QTableView, QTextEdit,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QDateTimeEdit,
+    QGridLayout, QGroupBox, QHeaderView, QLabel,
+    QLayout, QPushButton, QSizePolicy, QTabWidget,
+    QTableView, QTextEdit, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
         Form.resize(1200, 900)
-        self.layoutWidget = QWidget(Form)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(10, 10, 1171, 881))
-        self.gridLayout = QGridLayout(self.layoutWidget)
+        self.gridLayoutWidget = QWidget(Form)
+        self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
+        self.gridLayoutWidget.setGeometry(QRect(0, 10, 1211, 891))
+        self.gridLayout_3 = QGridLayout(self.gridLayoutWidget)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.tabWidget = QTabWidget(self.gridLayoutWidget)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tab = QWidget()
+        self.tab.setObjectName(u"tab")
+        self.gridLayout_2 = QGridLayout(self.tab)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.groupBox_5 = QGroupBox(self.layoutWidget)
+        self.groupBox_5 = QGroupBox(self.tab)
         self.groupBox_5.setObjectName(u"groupBox_5")
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -43,9 +51,9 @@ class Ui_Form(object):
         self.groupBox_5.setMaximumSize(QSize(16777215, 250))
         self.lastPersonLabel = QLabel(self.groupBox_5)
         self.lastPersonLabel.setObjectName(u"lastPersonLabel")
-        self.lastPersonLabel.setGeometry(QRect(0, 20, 200, 200))
-        self.lastPersonLabel.setAutoFillBackground(True)
-        self.lastPersonLabel.setOpenExternalLinks(True)
+        self.lastPersonLabel.setGeometry(QRect(0, 20, 150, 200))
+        self.lastPersonLabel.setAutoFillBackground(False)
+        self.lastPersonLabel.setOpenExternalLinks(False)
         self.lastPersonLabel.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
         self.lastPersonFullname = QTextEdit(self.groupBox_5)
         self.lastPersonFullname.setObjectName(u"lastPersonFullname")
@@ -54,16 +62,39 @@ class Ui_Form(object):
         self.lastPersonType = QTextEdit(self.groupBox_5)
         self.lastPersonType.setObjectName(u"lastPersonType")
         self.lastPersonType.setGeometry(QRect(220, 110, 171, 31))
+        self.lastPersonType.setReadOnly(True)
 
         self.gridLayout.addWidget(self.groupBox_5, 1, 0, 1, 1)
 
-        self.groupBox = QGroupBox(self.layoutWidget)
-        self.groupBox.setObjectName(u"groupBox")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
+        self.tableView = QTableView(self.tab)
+        self.tableView.setObjectName(u"tableView")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
-        self.groupBox.setSizePolicy(sizePolicy1)
+        sizePolicy1.setHeightForWidth(self.tableView.sizePolicy().hasHeightForWidth())
+        self.tableView.setSizePolicy(sizePolicy1)
+        font = QFont()
+        font.setPointSize(8)
+        font.setKerning(True)
+        self.tableView.setFont(font)
+        self.tableView.setLayoutDirection(Qt.LeftToRight)
+        self.tableView.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.tableView.setAutoScroll(False)
+        self.tableView.setTextElideMode(Qt.ElideMiddle)
+        self.tableView.setShowGrid(True)
+        self.tableView.setSortingEnabled(False)
+        self.tableView.setWordWrap(False)
+        self.tableView.setCornerButtonEnabled(True)
+
+        self.gridLayout.addWidget(self.tableView, 0, 0, 1, 1)
+
+        self.groupBox = QGroupBox(self.tab)
+        self.groupBox.setObjectName(u"groupBox")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy2)
         self.groupBox.setMinimumSize(QSize(350, 0))
         self.groupBox.setMaximumSize(QSize(16777215, 16777215))
         self.groupBox.setBaseSize(QSize(200, 600))
@@ -125,27 +156,18 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.groupBox, 0, 1, 1, 1)
 
-        self.tableView = QTableView(self.layoutWidget)
-        self.tableView.setObjectName(u"tableView")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.tableView.sizePolicy().hasHeightForWidth())
-        self.tableView.setSizePolicy(sizePolicy2)
-        font = QFont()
-        font.setPointSize(8)
-        font.setKerning(True)
-        self.tableView.setFont(font)
-        self.tableView.setTextElideMode(Qt.ElideMiddle)
-        self.tableView.setShowGrid(True)
-        self.tableView.setSortingEnabled(False)
-        self.tableView.setWordWrap(False)
-        self.tableView.setCornerButtonEnabled(True)
 
-        self.gridLayout.addWidget(self.tableView, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+
+        self.tabWidget.addTab(self.tab, "")
+
+        self.gridLayout_3.addWidget(self.tabWidget, 0, 0, 1, 1)
 
 
         self.retranslateUi(Form)
+
+        self.tabWidget.setCurrentIndex(0)
+
 
         QMetaObject.connectSlotsByName(Form)
     # setupUi
@@ -160,14 +182,15 @@ class Ui_Form(object):
         self.label_2.setText(QCoreApplication.translate("Form", u"\u0414\u043e", None))
         self.updateMovements.setText(QCoreApplication.translate("Form", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("Form", u"\u0422\u0443\u0440\u043d\u0438\u043a\u0435\u0442 #1", None))
-        self.openBarrier1.setText(QCoreApplication.translate("Form", u"\u041e\u0442\u043a\u0440\u044b\u0442\u044c 1", None))
-        self.closeBarrier1.setText(QCoreApplication.translate("Form", u"\u0417\u0430\u043a\u0440\u044b\u0442\u044c 1", None))
+        self.openBarrier1.setText(QCoreApplication.translate("Form", u"\u041e\u0442\u043a\u0440\u044b\u0442\u044c", None))
+        self.closeBarrier1.setText(QCoreApplication.translate("Form", u"\u0417\u0430\u043a\u0440\u044b\u0442\u044c", None))
         self.barrier1Indicator.setText(QCoreApplication.translate("Form", u"\u0412\u041a\u041b", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("Form", u"\u0422\u0443\u0440\u043d\u0438\u043a\u0435\u0442 #2", None))
-        self.openBarrier2.setText(QCoreApplication.translate("Form", u"\u041e\u0442\u043a\u0440\u044b\u0442\u044c 2", None))
-        self.closeBarrier2.setText(QCoreApplication.translate("Form", u"\u0417\u0430\u043a\u0440\u044b\u0442\u044c 2", None))
+        self.openBarrier2.setText(QCoreApplication.translate("Form", u"\u041e\u0442\u043a\u0440\u044b\u0442\u044c", None))
+        self.closeBarrier2.setText(QCoreApplication.translate("Form", u"\u0417\u0430\u043a\u0440\u044b\u0442\u044c", None))
         self.barrier2Indicator.setText(QCoreApplication.translate("Form", u"\u0412\u041a\u041b", None))
         self.groupBox_6.setTitle(QCoreApplication.translate("Form", u"\u0418\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f \u043d\u0430 \u0447\u0435\u043b\u043e\u0432\u0435\u043a\u0430", None))
         self.personMovementsButton.setText(QCoreApplication.translate("Form", u"\u041f\u0435\u0440\u0435\u043c\u0435\u0449\u0435\u043d\u0438\u044f", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Form", u"\u041f\u0435\u0440\u0435\u043c\u0435\u0449\u0435\u043d\u0438\u044f", None))
     # retranslateUi
 

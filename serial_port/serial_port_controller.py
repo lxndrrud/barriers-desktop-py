@@ -37,8 +37,8 @@ class SerialPortController(serial_port.serial_port_interface.ISerialPortControll
 
     def stopExecution(self): self.low_level_controller.closePort()
 
-    def __alarmBarrier(self):
-        check = self.low_level_controller.writeToPort("@Code=user-not-found;@reader=both")
+    def __alarmBarrier(self, reader: str):
+        check = self.low_level_controller.writeToPort(f"@Code=user-not-found;@reader={reader}")
         if not check: 
             self.showException.emit(f"high level {self.low_level_controller.port}->Турникет не подал звуковой сигнал->Ошибка записи в порт!")
 
@@ -61,7 +61,7 @@ class SerialPortController(serial_port.serial_port_interface.ISerialPortControll
                 # Найти человека по карте и проверить валидность
                 person = self.persons_service.send_skud_info(portData.code)
                 if not person:
-                    self.__alarmBarrier()
+                    self.__alarmBarrier(portData.reader)
                     continue
                 self.setLastPerson.emit(person)
                 # Проверка совершенного действия, раз в 100 мс

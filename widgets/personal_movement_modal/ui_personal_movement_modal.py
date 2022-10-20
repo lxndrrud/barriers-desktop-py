@@ -15,20 +15,21 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QGroupBox,
-    QHeaderView, QLabel, QListView, QPushButton,
-    QSizePolicy, QTableView, QTextEdit, QWidget)
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QDateTimeEdit,
+    QGroupBox, QHeaderView, QLabel, QListView,
+    QPushButton, QSizePolicy, QTableView, QTextEdit,
+    QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1150, 750)
-        Form.setMinimumSize(QSize(1150, 750))
+        Form.resize(1024, 750)
+        Form.setMinimumSize(QSize(1024, 750))
         Form.setMaximumSize(QSize(1150, 750))
         self.personPhoto = QLabel(Form)
         self.personPhoto.setObjectName(u"personPhoto")
-        self.personPhoto.setGeometry(QRect(20, 10, 200, 200))
+        self.personPhoto.setGeometry(QRect(20, 10, 150, 200))
         self.personPhoto.setAutoFillBackground(False)
         self.groupBox = QGroupBox(Form)
         self.groupBox.setObjectName(u"groupBox")
@@ -36,29 +37,34 @@ class Ui_Form(object):
         self.tableView = QTableView(self.groupBox)
         self.tableView.setObjectName(u"tableView")
         self.tableView.setGeometry(QRect(0, 20, 771, 461))
+        self.tableView.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.tableView.setProperty("showDropIndicator", False)
+        self.tableView.setDragDropOverwriteMode(False)
+        self.tableView.setTextElideMode(Qt.ElideMiddle)
+        self.tableView.setCornerButtonEnabled(False)
         self.groupBox_2 = QGroupBox(Form)
         self.groupBox_2.setObjectName(u"groupBox_2")
-        self.groupBox_2.setGeometry(QRect(800, 230, 321, 261))
+        self.groupBox_2.setGeometry(QRect(800, 230, 211, 261))
         self.fromTime = QDateTimeEdit(self.groupBox_2)
         self.fromTime.setObjectName(u"fromTime")
-        self.fromTime.setGeometry(QRect(60, 50, 194, 26))
+        self.fromTime.setGeometry(QRect(10, 50, 194, 26))
         self.fromTime.setDateTime(QDateTime(QDate(2022, 1, 1), QTime(15, 0, 0)))
         self.label = QLabel(self.groupBox_2)
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(60, 30, 67, 17))
         self.toTime = QDateTimeEdit(self.groupBox_2)
         self.toTime.setObjectName(u"toTime")
-        self.toTime.setGeometry(QRect(60, 100, 194, 26))
+        self.toTime.setGeometry(QRect(10, 100, 194, 26))
         self.toTime.setDateTime(QDateTime(QDate(2022, 1, 1), QTime(9, 0, 0)))
         self.label_2 = QLabel(self.groupBox_2)
         self.label_2.setObjectName(u"label_2")
-        self.label_2.setGeometry(QRect(60, 80, 67, 17))
+        self.label_2.setGeometry(QRect(10, 80, 67, 17))
         self.buildingSelect = QComboBox(self.groupBox_2)
         self.buildingSelect.setObjectName(u"buildingSelect")
-        self.buildingSelect.setGeometry(QRect(60, 130, 191, 25))
+        self.buildingSelect.setGeometry(QRect(10, 130, 191, 25))
         self.updateMovements = QPushButton(self.groupBox_2)
         self.updateMovements.setObjectName(u"updateMovements")
-        self.updateMovements.setGeometry(QRect(60, 180, 191, 25))
+        self.updateMovements.setGeometry(QRect(10, 180, 191, 25))
         self.list = QGroupBox(Form)
         self.list.setObjectName(u"list")
         self.list.setGeometry(QRect(240, 70, 371, 141))

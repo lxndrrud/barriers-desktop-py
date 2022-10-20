@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1150</width>
+    <width>1024</width>
     <height>750</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1150</width>
+    <width>1024</width>
     <height>750</height>
    </size>
   </property>
@@ -30,7 +30,7 @@
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>200</width>
+     <width>150</width>
      <height>200</height>
     </rect>
    </property>
@@ -62,6 +62,21 @@
       <height>461</height>
      </rect>
     </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContents</enum>
+    </property>
+    <property name="showDropIndicator" stdset="0">
+     <bool>false</bool>
+    </property>
+    <property name="dragDropOverwriteMode">
+     <bool>false</bool>
+    </property>
+    <property name="textElideMode">
+     <enum>Qt::ElideMiddle</enum>
+    </property>
+    <property name="cornerButtonEnabled">
+     <bool>false</bool>
+    </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
@@ -69,7 +84,7 @@
     <rect>
      <x>800</x>
      <y>230</y>
-     <width>321</width>
+     <width>211</width>
      <height>261</height>
     </rect>
    </property>
@@ -79,7 +94,7 @@
    <widget class="QDateTimeEdit" name="fromTime">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>10</x>
       <y>50</y>
       <width>194</width>
       <height>26</height>
@@ -112,7 +127,7 @@
    <widget class="QDateTimeEdit" name="toTime">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>10</x>
       <y>100</y>
       <width>194</width>
       <height>26</height>
@@ -132,7 +147,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>10</x>
       <y>80</y>
       <width>67</width>
       <height>17</height>
@@ -145,7 +160,7 @@
    <widget class="QComboBox" name="buildingSelect">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>10</x>
       <y>130</y>
       <width>191</width>
       <height>25</height>
@@ -155,7 +170,7 @@
    <widget class="QPushButton" name="updateMovements">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>10</x>
       <y>180</y>
       <width>191</width>
       <height>25</height>

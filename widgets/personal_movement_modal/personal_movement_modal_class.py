@@ -1,5 +1,5 @@
 from typing import Optional
-from PySide6.QtWidgets import QWidget, QAbstractItemView
+from PySide6.QtWidgets import QWidget, QAbstractItemView, QDialog
 from PySide6.QtCore import QDate, QTime, Signal, QStringListModel
 from models.employee import Employee
 import models.movement
@@ -13,7 +13,7 @@ import services.photos
 import widgets.personal_movement_modal.ui_personal_movement_modal
 
 
-class PersonalMovementModal(QWidget):
+class PersonalMovementModal(QDialog):
     def __init__(self, id_student: int, id_employee: int, 
     movements_service: services.movements.MovementsService, persons_service: services.persons.PersonsService, 
     buildings_service: services.buildings.BuildingsService, photos_service: services.photos.PhotosService) -> None:

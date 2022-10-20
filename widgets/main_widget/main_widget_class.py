@@ -1,6 +1,7 @@
 from typing import List
 from PySide6.QtWidgets import QWidget, QAbstractItemView, QGridLayout, QDialog, QLabel, QVBoxLayout
 from PySide6.QtCore import QDate, QTime, Signal
+from PySide6.QtCore import *
 from models.person import Person
 import models.table_model
 import models.movement
@@ -39,6 +40,7 @@ class MainWidget(QWidget):
 
     def build(self):
         # Инициализация UI
+        self.showFullScreen()
         self.ui_form.fromTime.setDate(QDate.currentDate())
         self.ui_form.fromTime.setTime(QTime(0, 0, 0))
         self.ui_form.toTime.setDate(QDate.currentDate().addDays(1))
@@ -46,7 +48,7 @@ class MainWidget(QWidget):
         self.ui_form.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.ui_form.gridLayout.setSizeConstraint(QGridLayout.SetMaximumSize)
         # Соединение обновления размера формы по размер окна 
-        self.resizeEvent = lambda event: self.ui_form.layoutWidget.resize(
+        self.resizeEvent = lambda event: self.ui_form.gridLayoutWidget.resize(
             event.size().width()-20, 
             event.size().height()-20)
         # Обновление передвижений
@@ -142,6 +144,7 @@ class MainWidget(QWidget):
                 self.buildings_service,
                 self.photos_service))
         personalModal.show()
+        personalModal.raise_()
         self.modals.append(personalModal)
 
 

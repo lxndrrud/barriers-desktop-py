@@ -6,6 +6,7 @@ class MyTableModel(QAbstractTableModel):
         QAbstractTableModel.__init__(self, parent, *args)
         self.mylist = mylist
         self.my_object_list = [ tuple_[0] for tuple_ in self.mylist ]
+        
         self.header = header
 
     def rowCount(self, parent):
@@ -14,11 +15,16 @@ class MyTableModel(QAbstractTableModel):
     def columnCount(self, parent):
         return len(self.header)
 
-    def data(self, index, role=0):
-        return self.mylist[index.row()][index.column() + 1]
+    def data(self, index, role):
+        if role == Qt.DisplayRole:
+            return self.mylist[index.row()][index.column() + 1]
+        if role == Qt.TextAlignmentRole:
+            return Qt.AlignCenter 
+        return None
 
     def setData(self, index, value, role) -> bool:
-        self.mylist[index.row()][index.column() + 1] = value
+        if role == Qt.DisplayRole:
+            self.mylist[index.row()][index.column() + 1] = value
         #self.dataChanged.emit(index.row(), index.column())
         return True
 

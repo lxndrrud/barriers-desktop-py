@@ -36,6 +36,13 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
         self.thread = Thread(target=self.__listenPort)
         self.thread.start()
 
+    def __alarmBarrier(self, reader: str):
+        check = self.low_level_controller.writeToPort(f"@Code=user-not-found;@reader={reader}")
+        if not check: 
+            self.showException.emit(f"high level {self.low_level_controller.port}->Турникет не подал звуковой сигнал->Ошибка записи в порт!")
+
+
+
     def __listenPort(self):
         try: self.low_level_controller.openPort()
         except serial.SerialException as e: 
@@ -51,6 +58,7 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
                 # Найти человека по карте и проверить валидность
                 person = self.persons_service.send_skud_info(portData.code)
                 if not person:
+                    self.__alarmBarrier(portData.reader)
                     continue
                 self.setLastPerson.emit(person)
                 
