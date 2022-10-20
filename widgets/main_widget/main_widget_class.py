@@ -60,6 +60,9 @@ class MainWidget(QWidget):
         self.ui_form.closeBarrier2.clicked.connect(self.barrier2Controller.lockBarrier)
         self.ui_form.openBarrier1.clicked.connect(self.barrier1Controller.unlockBarrier)
         self.ui_form.openBarrier2.clicked.connect(self.barrier2Controller.unlockBarrier)
+        # Обновление подключения к турникетам
+        self.ui_form.checkPort1.clicked.connect(self.barrier1Controller.checkPort)
+        self.ui_form.checkPort2.clicked.connect(self.barrier2Controller.checkPort)
         # Отключение перед выходом из приложения
         self.barrier1Controller.afterEventUpdated.connect(self.updateMovements)
         self.beforeShutdown.connect(self.barrier1Controller.stopExecution)

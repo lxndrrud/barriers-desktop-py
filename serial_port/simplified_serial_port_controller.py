@@ -12,7 +12,7 @@ import models.port_data
 class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortController):
     def __init__(self, port: str, baudrate: int) -> None:
         super().__init__()
-        self.low_level_controller = serial_port.low_level_controller.SerialLowLevelController(port, baudrate)
+        self._low_level_controller = serial_port.low_level_controller.SerialLowLevelController(port, baudrate)
     
     def build(self, 
     persons_service: services.persons.PersonsService, movements_service: services.movements.MovementsService, 
@@ -20,7 +20,7 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
         self.persons_service: services.persons.PersonsService = persons_service
         self.movements_service: services.movements.MovementsService = movements_service
         self.logger: utils.logger.Logger = logger
-        self.low_level_controller.build(logger)
+        self._low_level_controller.build(logger)
 
     def lockBarrier(self):
         pass
@@ -28,49 +28,34 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
     def unlockBarrier(self):
         pass
 
-    def stopExecution(self):
-        self.low_level_controller.closePort()
-
-
-    def run(self): 
-        self.thread = Thread(target=self.__listenPort)
-        self.thread.start()
-
-    def __alarmBarrier(self, reader: str):
-        check = self.low_level_controller.writeToPort(f"@Code=user-not-found;@reader={reader}")
-        if not check: 
-            self.showException.emit(f"high level {self.low_level_controller.port}->Турникет не подал звуковой сигнал->Ошибка записи в порт!")
-
-
-
-    def __listenPort(self):
-        try: self.low_level_controller.openPort()
+    def _listenPort(self):
+        try: self._low_level_controller.openPort()
         except serial.SerialException as e: 
-            self.logger.writeToLogs(f"simplified high level {self.low_level_controller.port}: {e}")
+            self.logger.writeToLogs(f"simplified high level {self._low_level_controller.port}: {e}")
         while(self._isOpen()):
             sleep(0.01)
             try:
                 # Получить и проверить данные с порта
-                strPortData = self.low_level_controller.readFromPort()
+                strPortData = self._low_level_controller.readFromPort()
                 if not self._validatePortData(strPortData): 
                     continue
                 portData = models.port_data.PortData(strPortData)
                 # Найти человека по карте и проверить валидность
                 person = self.persons_service.send_skud_info(portData.code)
                 if not person:
-                    self.__alarmBarrier(portData.reader)
+                    self._alarmBarrier(portData.reader)
                     continue
                 self.setLastPerson.emit(person)
                 
                 returnCode = self.movements_service.create_action(portData)
                 if returnCode != 201:
                     (self.showException
-                    .emit(f"simplified high level {self.low_level_controller.port}: Человек({portData.code}) прошел({portData.reader}), но не был записан"))
+                    .emit(f"simplified high level {self._low_level_controller.port}: Человек({portData.code}) прошел({portData.reader}), но не был записан"))
                     (self.logger
-                    .writeToLogs(f"simplified high level {self.low_level_controller.port}: Человек({portData.code}) прошел({portData.reader}), но не был записан"))
+                    .writeToLogs(f"simplified high level {self._low_level_controller.port}: Человек({portData.code}) прошел({portData.reader}), но не был записан"))
                 # Запросить обновление виджета
                 self.afterEventUpdated.emit()
             except Exception as e:
-                self.showException.emit(f"simplified high level {self.low_level_controller.port} listen: {e}")
-                self.logger.writeToLogs(f"simplified high level {self.low_level_controller.port} listen: {e}")
+                self.showException.emit(f"simplified high level {self._low_level_controller.port} listen: {e}")
+                self.logger.writeToLogs(f"simplified high level {self._low_level_controller.port} listen: {e}")
     

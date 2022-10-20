@@ -1,3 +1,4 @@
+from threading import Thread
 from PySide6.QtCore import QObject, Signal
 from models.person import Person
 import services.persons
@@ -11,7 +12,8 @@ class ISerialPortController(QObject):
     setLastPerson = Signal(Person)
     indicateStatus = Signal(bool)
     showException = Signal(str)
-    low_level_controller: serial_port.low_level_controller.SerialLowLevelController
+    _low_level_controller: serial_port.low_level_controller.SerialLowLevelController
+    _thread: Thread
 
     def build(self, 
     persons_service: services.persons.PersonsService, movements_service: services.movements.MovementsService, 
@@ -19,9 +21,9 @@ class ISerialPortController(QObject):
         pass
 
     def _isOpen(self):
-        value_ = self.low_level_controller.isOpen()
+        value_ = self._low_level_controller.isOpen()
         self.indicateStatus.emit(value_)
-        if not value_: self.showException.emit(f"Порт {self.low_level_controller.port} закрыт!")
+        if not value_: self.showException.emit(f"Порт {self._low_level_controller.port} закрыт!")
         return value_
 
     def _validatePortData(self, portData: str):
@@ -33,6 +35,18 @@ class ISerialPortController(QObject):
             return False
         return True
 
+    def _alarmBarrier(self, reader: str):
+        check = self.low_level_controller.writeToPort(f"@Code=user-not-found;@reader={reader}")
+        if not check: 
+            self.showException.emit(f"high level {self.low_level_controller.port}->Турникет не подал звуковой сигнал->Ошибка записи в порт!")
+
+    def checkPort(self):
+        self._low_level_controller.closePort()
+        self.run()
+
+    def _listenPort(self):
+        pass
+
     def lockBarrier(self):
        pass
 
@@ -40,7 +54,9 @@ class ISerialPortController(QObject):
         pass
 
     def stopExecution(self):
-        pass
+        self._low_level_controller.closePort()
 
     def run(self): 
-        pass
+        self._thread = Thread(target=self._listenPort)
+        self._thread.start()
+
