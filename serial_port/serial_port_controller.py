@@ -1,7 +1,5 @@
-from threading import Thread
 from time import sleep
 import serial
-from models.person import Person
 import models.port_data
 import services.persons
 import services.movements

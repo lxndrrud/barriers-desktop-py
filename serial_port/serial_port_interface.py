@@ -31,7 +31,7 @@ class ISerialPortController(QObject):
             return False
         if len(portData.split(";")) != 2:
             return False
-        if "@Code" not in portData and "@Direction" not in portData:
+        if not ("@Code" in portData and "@Direction" in portData):
             return False
         return True
 
@@ -56,7 +56,7 @@ class ISerialPortController(QObject):
     def stopExecution(self):
         self._low_level_controller.closePort()
 
-    def run(self): 
+    def run(self):
         self._thread = Thread(target=self._listenPort)
         self._thread.start()
 

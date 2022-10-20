@@ -1,4 +1,3 @@
-from threading import Thread
 from time import sleep
 import serial
 import serial_port.serial_port_interface
@@ -29,10 +28,13 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
         pass
 
     def _listenPort(self):
+        # Открытие порта
         try: self._low_level_controller.openPort()
         except serial.SerialException as e: 
             self.logger.writeToLogs(f"simplified high level {self._low_level_controller.port}: {e}")
+        # Цикл прослушки
         while(self._isOpen()):
+            # Задержка прослушки
             sleep(0.01)
             try:
                 # Получить и проверить данные с порта
@@ -45,15 +47,16 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
                 if not person:
                     self._alarmBarrier(portData.reader)
                     continue
+                # Запустить callback отрисовки последнего отсканированного чела
                 self.setLastPerson.emit(person)
-                
+                # Создать перемещение на сервере
                 returnCode = self.movements_service.create_action(portData)
                 if returnCode != 201:
                     (self.showException
                     .emit(f"simplified high level {self._low_level_controller.port}: Человек({portData.code}) прошел({portData.reader}), но не был записан"))
                     (self.logger
                     .writeToLogs(f"simplified high level {self._low_level_controller.port}: Человек({portData.code}) прошел({portData.reader}), но не был записан"))
-                # Запросить обновление виджета
+                # Запустить callback обновления таблицы перемещений
                 self.afterEventUpdated.emit()
             except Exception as e:
                 self.showException.emit(f"simplified high level {self._low_level_controller.port} listen: {e}")
