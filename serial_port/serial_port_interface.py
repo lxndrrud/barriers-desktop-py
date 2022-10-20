@@ -36,9 +36,9 @@ class ISerialPortController(QObject):
         return True
 
     def _alarmBarrier(self, reader: str):
-        check = self.low_level_controller.writeToPort(f"@Code=user-not-found;@reader={reader}")
+        check = self._low_level_controller.writeToPort(f"@Code=user-not-found;@reader={reader}")
         if not check: 
-            self.showException.emit(f"high level {self.low_level_controller.port}->Турникет не подал звуковой сигнал->Ошибка записи в порт!")
+            self.showException.emit(f"high level {self._low_level_controller.port}->Турникет не подал звуковой сигнал->Ошибка записи в порт!")
 
     def checkPort(self):
         self._low_level_controller.closePort()
