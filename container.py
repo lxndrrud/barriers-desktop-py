@@ -37,9 +37,6 @@ def build_app():
         movements_service, buildings_service, persons_service, photos_service,
         barrier1Controller, barrier2Controller)
 
-    barrier1Controller.run()
-    barrier2Controller.run()
-
     return m_widget
 
     

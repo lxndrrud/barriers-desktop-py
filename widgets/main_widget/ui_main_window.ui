@@ -217,7 +217,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>ВКЛ</string>
+               <string>ВЫКЛ</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -298,7 +298,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>ВКЛ</string>
+               <string>ВЫКЛ</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
