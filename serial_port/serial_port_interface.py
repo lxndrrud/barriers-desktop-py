@@ -1,4 +1,5 @@
 from threading import Thread
+from typing import Optional
 from PySide6.QtCore import QObject, Signal
 from models.person import Person
 import services.persons
@@ -13,7 +14,7 @@ class ISerialPortController(QObject):
     indicateStatus = Signal(bool)
     showException = Signal(str)
     _low_level_controller: serial_port.low_level_controller.SerialLowLevelController
-    _thread: Thread
+    _thread: Optional[Thread] = None
 
     def build(self, 
     persons_service: services.persons.PersonsService, movements_service: services.movements.MovementsService, 
@@ -31,7 +32,7 @@ class ISerialPortController(QObject):
             return False
         if len(portData.split(";")) != 2:
             return False
-        if not ("@Code" in portData and "@Direction" in portData):
+        if "@Code" not in portData or "@Direction" not in portData:
             return False
         return True
 
@@ -40,9 +41,11 @@ class ISerialPortController(QObject):
         if not check: 
             self.showException.emit(f"high level {self._low_level_controller.port}->Турникет не подал звуковой сигнал->Ошибка записи в порт!")
 
-    def checkPort(self):
-        self._low_level_controller.closePort()
-        self.run()
+    def openPort(self):
+        if not self._thread:
+            try: self._low_level_controller.openPort()
+            except Exception as e: print(f"open port exception: {e}")
+            self.run()
 
     def _listenPort(self):
         pass
@@ -59,4 +62,5 @@ class ISerialPortController(QObject):
     def run(self):
         self._thread = Thread(target=self._listenPort)
         self._thread.start()
+        self._thread = None
 

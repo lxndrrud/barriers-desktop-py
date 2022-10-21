@@ -11,7 +11,7 @@ class SerialLowLevelController:
         self.logger = logger
 
     def openPort(self):
-        self.serial_port = serial.Serial(self.port, self.baudrate, timeout=0.1)
+        self.serial_port = serial.Serial(self.port, self.baudrate, timeout=0.7)
 
     def writeToPort(self, toWrite: str) -> bool:
         try:
@@ -21,7 +21,6 @@ class SerialLowLevelController:
             return False
         except Exception as e:
             self.logger.writeToLogs(f"low level {self.port} write to port: {e}")
-            self.serial_port.close()
             return False
 
     def readFromPort(self) -> Optional[str]:
@@ -32,7 +31,6 @@ class SerialLowLevelController:
             return None
         except Exception as e:
             self.logger.writeToLogs(f"low level {self.port} read from port: {e}")
-            self.serial_port.close()
             return None
 
     def closePort(self):

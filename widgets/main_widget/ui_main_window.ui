@@ -223,7 +223,7 @@
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
-             <widget class="QPushButton" name="checkPort1">
+             <widget class="QPushButton" name="openPort1">
               <property name="geometry">
                <rect>
                 <x>20</x>
@@ -233,7 +233,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>Обновить</string>
+               <string>Открыть порт</string>
               </property>
              </widget>
              <widget class="QPushButton" name="closePort1">
@@ -304,7 +304,7 @@
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
-             <widget class="QPushButton" name="checkPort2">
+             <widget class="QPushButton" name="openPort2">
               <property name="geometry">
                <rect>
                 <x>20</x>
@@ -314,7 +314,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>Обновить</string>
+               <string>Открыть порт</string>
               </property>
              </widget>
              <widget class="QPushButton" name="closePort2">

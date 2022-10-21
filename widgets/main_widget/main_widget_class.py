@@ -13,6 +13,7 @@ import services.persons
 import services.photos
 import widgets.main_widget.ui_main_window
 import widgets.personal_movement_modal.personal_movement_modal_class
+from env import ID_BUILDING
 
 
 class MainWidget(QWidget):
@@ -60,9 +61,9 @@ class MainWidget(QWidget):
         self.ui_form.closeBarrier2.clicked.connect(self.barrier2Controller.lockBarrier)
         self.ui_form.openBarrier1.clicked.connect(self.barrier1Controller.unlockBarrier)
         self.ui_form.openBarrier2.clicked.connect(self.barrier2Controller.unlockBarrier)
-        # Обновление подключения к турникетам
-        self.ui_form.checkPort1.clicked.connect(self.barrier1Controller.checkPort)
-        self.ui_form.checkPort2.clicked.connect(self.barrier2Controller.checkPort)
+        # Открытие подключения к турникетам
+        self.ui_form.openPort1.clicked.connect(self.barrier1Controller.openPort)
+        self.ui_form.openPort2.clicked.connect(self.barrier2Controller.openPort)
         # Закрытие порта
         self.ui_form.closePort1.clicked.connect(self.barrier1Controller.stopExecution)
         self.ui_form.closePort2.clicked.connect(self.barrier2Controller.stopExecution)
@@ -113,6 +114,8 @@ class MainWidget(QWidget):
         # Загрузить здания
         buildings = self.buildings_service.get_all()
         for b in buildings: self.ui_form.buildingSelect.addItem(b.name, b.id_)
+        if len(buildings) > 0:
+            self.ui_form.buildingSelect.setCurrentIndex(ID_BUILDING - 1)
         # Загрузить передвижения
         self.updateMovements()
 
@@ -126,6 +129,8 @@ class MainWidget(QWidget):
         for movement in movements: mapped.append(movement.to_tuple())
         header = ('Здание', 'Событие', 'Время', 'Имя', 'Отчество', 'Фамилия', 'СКУД', 'Тип')
         self.ui_form.tableView.setModel(models.table_model.MyTableModel(self.ui_form.tableView, mapped, header))
+        if len(movements) > 0:
+            self.ui_form.tableView.selectRow(0)
 
     def setLastPerson(self, person: Person):
         if person.photo_path:

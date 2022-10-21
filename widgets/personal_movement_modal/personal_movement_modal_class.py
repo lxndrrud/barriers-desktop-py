@@ -11,6 +11,7 @@ import services.movements
 import services.persons
 import services.photos
 import widgets.personal_movement_modal.ui_personal_movement_modal
+from env import ID_BUILDING
 
 
 class PersonalMovementModal(QDialog):
@@ -49,6 +50,8 @@ class PersonalMovementModal(QDialog):
         # Загрузить здания
         buildings = self.buildings_service.get_all()
         for b in buildings: self.ui_form.buildingSelect.addItem(b.name, b.id_)
+        if len(buildings) > 0:
+            self.ui_form.buildingSelect.setCurrentIndex(ID_BUILDING - 1)
         # Загрузить передвижения
         self.updateMovements()
 

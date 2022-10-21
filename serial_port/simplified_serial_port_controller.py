@@ -28,14 +28,8 @@ class SimplifiedPortController(serial_port.serial_port_interface.ISerialPortCont
         pass
 
     def _listenPort(self):
-        # Открытие порта
-        try: self._low_level_controller.openPort()
-        except serial.SerialException as e: 
-            self.logger.writeToLogs(f"simplified high level {self._low_level_controller.port}: {e}")
         # Цикл прослушки
         while(self._isOpen()):
-            # Задержка прослушки
-            sleep(0.01)
             try:
                 # Получить и проверить данные с порта
                 strPortData = self._low_level_controller.readFromPort()

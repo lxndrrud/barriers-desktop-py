@@ -32,11 +32,12 @@ class SerialPortController(serial_port.serial_port_interface.ISerialPortControll
         if not check: self.showException.emit(f"high level {self._low_level_controller.port}->Турникет не открыт->Ошибка записи в порт!") 
 
     def _listenPort(self):
+        """
         try: self._low_level_controller.openPort()
         except serial.SerialException as e: 
             self.logger.writeToLogs(f"high level {self._low_level_controller.port}: {e}")
+        """
         while(self._isOpen()):
-            sleep(0.01)
             try:
                 # Получить и проверить данные с порта
                 strPortData = self._low_level_controller.readFromPort()
