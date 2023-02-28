@@ -1,249 +1,194 @@
-#include <WiegandMega2560.h>
+#include <WiegandMulti.h>
 
-#define FALSE 0
-#define TRUE  1
+// ---- DIGITAL PINS -----
+// Пины считывателя на вход
+#define D0Enter 2
+#define D1Enter 3
+// Пины считывателя на выход
+#define D0Exit 4
+#define D1Exit 5
+// Турникет
+#define f2 7
+#define f1 6
+#define f2Common 8
+#define f1Common 9
 
+// ---- ANALOG PINS -----
+// Звук считывателя
+#define soundReaderExit A4
+#define soundReaderEnter A5
+// Лампочки считывателей
+#define ledReaderExit A2
+#define ledReaderEnter A3
+// Реле
+#define relayExit A0
+#define relayEnter A1
 
-WIEGAND wg;
+ // Считыватель на вход
+WIEGANDMULTI wgEnter;
+// Cчитыватель на выход
+WIEGANDMULTI wgExit; 
 
-// Readers sound ports (Звук считывателя)
-int soundReaderExit = 5;
-int soundReaderEnter = 6;
+void Reader1D0Interrupt(void) {
+  wgEnter.ReadD0();
+}
 
-// Readers led ports (Лампочки считывателей)
-int ledReaderExit = 4;
-int ledReaderEnter = 7;
+void Reader1D1Interrupt(void) {
+  wgEnter.ReadD1();
+}
 
-// Relay ports (Реле)
-int relayExit = 8;
-int relayEnter = 9;
+void Reader2D0Interrupt(void) {
+  wgExit.ReadD0();
+}
 
-// Barriers ports (Порты для турникета)
-int f2 = 50;
-int f1 = 48;
-int f2Common = 51;
-int f1Common = 49;
+void Reader2D1Interrupt(void) {
+  wgExit.ReadD1();
+}
+
 
 void setup() {
-  /* 
-    f2 nz pin mode 44
-    f1 nz pin mode 41
-  */
-
-  Serial.begin(9600);
-  // Включить считыватели
-	wg.begin(TRUE, TRUE, FALSE);
+	Serial.begin(9600);  
+	wgEnter.begin(D0Enter ,D1Enter, Reader1D0Interrupt, Reader1D1Interrupt);
+	wgExit.begin(D0Exit, D1Exit, Reader2D0Interrupt ,Reader2D1Interrupt);
 
   pinMode(soundReaderEnter, OUTPUT);
   pinMode(soundReaderExit, OUTPUT);
   pinMode(ledReaderEnter, OUTPUT);
   pinMode(ledReaderExit, OUTPUT);
-
   pinMode(relayEnter, OUTPUT);
   pinMode(relayExit, OUTPUT);
+  pinMode(f2, INPUT); // F2 НЗ
+  pinMode(f1, INPUT); // F1 НЗ
+  pinMode(f2Common, OUTPUT); // F2 общий
+  pinMode(f1Common, OUTPUT); // F1 общий
 
   digitalWrite(soundReaderEnter, HIGH);
   digitalWrite(soundReaderExit, HIGH);
   digitalWrite(ledReaderEnter, HIGH);
   digitalWrite(ledReaderExit, HIGH);
-
-  // РЕЛЕ ДЛЯ ТОГО ЧТОБЫ РАБОТАЛА ПРОКРУТКА ОНИ ДОЛЖНЫ БЫТЬ В HIGH
   digitalWrite(relayEnter, LOW);
   digitalWrite(relayExit, LOW);
 
-  // -- Для прокрутки турникета
-  pinMode(f2, INPUT); // F2 NZ
-  pinMode(f1, INPUT); // F1 NZ
-  pinMode(f2Common, OUTPUT); // F2 comman
-  pinMode(f1Common, OUTPUT); // F1 comman
+   // -- Для прокрутки турникета
   digitalWrite(f2, HIGH);
   digitalWrite(f1, HIGH);
-  
 }
-
-String getValue(String data, char separator, int index)
-{
-    int found = 0;
-    int strIndex[] = { 0, -1 };
-    int maxIndex = data.length() - 1;
-
-    for (int i = 0; i <= maxIndex && found <= index; i++) {
-        if (data.charAt(i) == separator || i == maxIndex) {
-            found++;
-            strIndex[0] = strIndex[1] + 1;
-            strIndex[1] = (i == maxIndex) ? i+1 : i;
-        }
-    }
-    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
-
-String getCode(String data) {
-  return getValue(getValue(data, ';', 0), '=', 1);
-}
-
-String getReader(String data) {
-  return getValue(getValue(data, ';', 1), '=', 1);
-}
-
 
 void loop() {
-  // Задержка для считывания данных о проходе
-  // Она ломает считыватели, если её включить, то они себя будут вести не адекватно
-  // Начнётся полный рандом их работы. Но она нужна для турникета, пока хз как исправить
-  //delay(50); 
+  delay(50);
+  // Выдать данные с карты в сериал порт
+	if(wgEnter.available()) printCardCode(wgEnter.getCode(), "enter");
+	if(wgExit.available()) printCardCode(wgExit.getCode(), "exit");
 
-  // Проверка прохода.
-  /*if (digitalRead(f1) == HIGH) {
-    
-    digitalWrite(ledReaderEnter, HIGH);
-    digitalWrite(relayEnter, HIGH);
-    Serial.println("enter-success");
-  }
-  if (digitalRead(f2) == HIGH) {
-    
-    digitalWrite(ledReaderExit, HIGH);
-    digitalWrite(relayExit, HIGH);
-    Serial.println("exit-success");
-  }
-  */
-
-  // Здесь происходит само считывание данных с карты и отправка результата в сириал-порт
-  if(wg.available()) {
-    Serial.print("@Code=");
-    Serial.print(wg.getCode());
-    Serial.print(";");
-    if (wg.getGateActive() == 1) {
-      Serial.print("@Direction=enter"); 
-    } else if (wg.getGateActive() == 2) {
-      Serial.print("@Direction=exit"); 
-    }
-    Serial.println("");
-	}
-
-
-  // Это основная функция для работы с турникетом
-  if(Serial.available() > 0) {
+  // Получить комманды для турникета с сериал порта
+  if(Serial.available()) {
     String serialData = Serial.readString();
-    serialData.trim();
-    String code = getValue(serialData, ';', 0);
-    String reader = getValue(serialData, ';', 1);
-    code = getValue(code, '=', 1);
-    reader = getValue(reader, '=', 1);
+    String command = getSerialCommand(serialData);
+    String commandSide = getCommandSide(serialData);
     
-    // Если пользователь не найде начинаем пищать
-    // @Code=user-not-found;@reader=exit or @Code=user-not-found;@reader=enter
-    if (code == "user-not-found") {
-      if (reader == "exit") {
-        digitalWrite(soundReaderExit, LOW);
-        delay(1500);
-        digitalWrite(soundReaderExit, HIGH);
-      }
-      else if (reader == "enter") {
-        digitalWrite(soundReaderEnter, LOW);
-        delay(1500);
-        digitalWrite(soundReaderEnter, HIGH);
-      }
-    }
-
-    // Если пользователь найден, то начинаем химичить с проходом (палками турникета)
-    // @Code=user-success;@reader=exit or @Code=user-success;@reader=enter
-    if (code == "user-success") {
-      
-      // Если это сторона выхода
-      if (reader == "exit") {
-        bool exited = false;
-        digitalWrite(ledReaderExit, LOW); // Делаем лампочку на считывателе зелёной
-        digitalWrite(relayExit, LOW); // Открываем реле
-
-        for (int i=0; i < 350; i++ ) {
-          if (digitalRead(f2) == HIGH) {
-            digitalWrite(ledReaderExit, HIGH); // Возвращшаем лампочку на считывателе в крастный 
-            digitalWrite(relayExit, HIGH); // Закрываем реле
-            Serial.println("exit-success");
-            exited = true;
-            break;
-          } 
-          delay(10);
-        }
-        digitalWrite(ledReaderExit, HIGH);
-        digitalWrite(relayExit, HIGH);
-        if (!exited) {
-          Serial.println("exit-fail");
-        }
-        
-        // Если это сторона входа
-      } else if (reader == "enter") {
-        bool entered = false;
-        digitalWrite(ledReaderEnter, LOW); // Делаем лампочку на считывателе зелёной
-        digitalWrite(relayEnter, LOW); // Открываем реле
-
-        for (int i=0; i < 350; i++ ) {
-          if (digitalRead(f1) == HIGH) {
-            digitalWrite(ledReaderEnter, HIGH); // Возвращшаем лампочку на считывателе в крастный 
-            digitalWrite(relayEnter, HIGH); // Закрываем реле
-            Serial.println("enter-success");
-            entered = true;
-            break;
-          }
-          delay(10);
-        }
-
-        digitalWrite(ledReaderEnter, HIGH);
-        digitalWrite(relayEnter, HIGH);
-
-        if (!entered) Serial.println("enter-fail");
-      }
-    }
-
-    // ЗАКРЫТЬ ТУРНИКЕТ ПО КНОПКЕ
-    // @Code=lock;@reader=exit or @Code=user-success;@reader=enter
-    if (code == "lock") {
-      if (reader == "exit") {
-        digitalWrite(ledReaderExit, HIGH);
-        digitalWrite(relayExit, HIGH);
-      }
-      else if (reader == "enter") {
-        digitalWrite(ledReaderEnter, HIGH);
-        digitalWrite(relayEnter, HIGH);
-      }
-      else if (reader == "both") {
-        digitalWrite(ledReaderExit, HIGH);
-        digitalWrite(relayExit, HIGH);
-        digitalWrite(ledReaderEnter, HIGH);
-        digitalWrite(relayEnter, HIGH);
-      }
-    }
-
-    // ОТКРЫТЬ ТУРНИКЕТ ПО КНОПКЕ
-    // @Code=unlock;@reader=exit or @Code=unlock;@reader=enter
-    if (code == "unlock") {
-
-      if (reader == "exit") {
-        digitalWrite(ledReaderExit, LOW);
-        digitalWrite(relayExit, LOW);
-        while(Serial.available() == 0)
-        digitalWrite(ledReaderExit, HIGH);
-        digitalWrite(relayExit, HIGH);
-      } else if (reader == "enter") {
-        digitalWrite(ledReaderEnter, LOW);
-        digitalWrite(relayEnter, LOW);
-        while(Serial.available() == 0)
-        digitalWrite(ledReaderEnter, HIGH);
-        digitalWrite(relayEnter, HIGH);
-      } else if (reader == "both") {
-        digitalWrite(ledReaderExit, LOW);
-        digitalWrite(relayExit, LOW);
-        digitalWrite(ledReaderEnter, LOW);
-        digitalWrite(relayEnter, LOW);
-        while(Serial.available() == 0)
-        digitalWrite(ledReaderExit, HIGH);
-        digitalWrite(relayExit, HIGH);
-        digitalWrite(ledReaderEnter, HIGH);
-        digitalWrite(relayEnter, HIGH);
-      }
-
-    }
-    
+    if (command == "user-not-found") alertSignal(commandSide);
+    if (command == "user-success") controlDoor(commandSide);
   }
+}
 
+// Выдать данные карты в сериал порт
+void printCardCode(long unsigned code, String direction) {
+  Serial.print("@Code=");
+  Serial.print(code);
+  Serial.print(";");
+  Serial.print("@Direction="); 
+  Serial.print(direction);
+  Serial.println("");
+}
+
+// Воспроизвести сигнал и включить
+// светодиод на считывателе при неудаче
+void alertSignal(String direction) {
+  if (direction == "exit") {
+    digitalWrite(soundReaderExit, LOW);
+    delay(1500);
+    digitalWrite(soundReaderExit, HIGH);
+  } else {
+    digitalWrite(soundReaderEnter, LOW);
+    delay(1500);
+    digitalWrite(soundReaderEnter, HIGH);
+  }
+}
+
+// Управление проходом
+void controlDoor(String direction) {
+  if (direction == "exit") {
+    bool exited = false;
+    digitalWrite(ledReaderExit, LOW); // Делаем лампочку на считывателе зелёной
+    digitalWrite(relayExit, HIGH); // Открываем реле
+
+    for (int i=0; i < 350; i++ ) {
+      if (digitalRead(f2) == HIGH) {
+        digitalWrite(ledReaderExit, HIGH); // Возвращшаем лампочку на считывателе в крастный 
+        digitalWrite(relayExit, LOW); // Закрываем реле
+        Serial.println("exit-success");
+        exited = true;
+        break;
+      } 
+      delay(10);
+    }
+
+    digitalWrite(ledReaderExit, HIGH);
+    digitalWrite(relayExit, LOW);
+
+    if (!exited) Serial.println("exit-fail");
+    
+    // Если это сторона входа
+  } else if (direction == "enter") {
+    bool entered = false;
+    digitalWrite(ledReaderEnter, LOW); // Делаем лампочку на считывателе зелёной
+    digitalWrite(relayEnter, HIGH); // Открываем реле
+
+    for (int i=0; i < 350; i++ ) {
+      if (digitalRead(f1) == HIGH) {
+        digitalWrite(ledReaderEnter, HIGH); // Возвращшаем лампочку на считывателе в крастный 
+        digitalWrite(relayEnter, LOW); // Закрываем реле
+        Serial.println("enter-success");
+        entered = true;
+        break;
+      }
+      delay(10);
+    }
+
+    digitalWrite(ledReaderEnter, HIGH);
+    digitalWrite(relayEnter, LOW);
+
+    if (!entered) Serial.println("enter-fail");
+  }
+}
+
+// Получить строку из сериал порта
+String getValue(String data, char separator, int index) {
+  int found = 0;
+  int strIndex[] = { 0, -1 };
+  int maxIndex = data.length() - 1;
+
+  for (int i = 0; i <= maxIndex && found <= index; i++) {
+    if (data.charAt(i) == separator || i == maxIndex) {
+        found++;
+        strIndex[0] = strIndex[1] + 1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+  
+  return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+// Получить код из комманды пришедшей в сериал порт
+String getSerialCommand(String str) {
+  str.trim();
+  String code = getValue(str, ';', 0);
+  return getValue(code, '=', 1);
+}
+
+// Получить направление из комманды пришедшей в сериал порт
+String getCommandSide(String str) {
+  str.trim();
+  String reader = getValue(str, ';', 1);
+  return getValue(reader, '=', 1);
 }
